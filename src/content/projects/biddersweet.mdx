@@ -1,0 +1,44 @@
+---
+title: BidderSweet
+tagline: A multi-storefront auction platform with Stripe-backed credits, concurrency-safe bidding, and a financial ledger built for correctness over convenience.
+description: Production auction platform supporting multiple independent storefronts, Stripe payment integration, and an append-only credits ledger with concurrency-safe bid placement.
+stack: ['Rails 8', 'PostgreSQL', 'Stripe', 'Minitest', 'Sidekiq', 'Redis']
+date: 2025-06-01
+order: 1
+links: {}
+---
+
+## The Problem
+
+Running an online auction requires solving several genuinely hard problems simultaneously: **financial correctness** (credits must never be over-spent or double-debited), **concurrency safety** (two users bidding at the same millisecond must not both win), and **multi-tenancy** (multiple independent storefronts with isolated data, each with their own Stripe integration).
+
+The surface area where real money moves is where bugs are most expensive. This project prioritized correctness over developer convenience at every layer.
+
+## The Stack
+
+- **Rails 8** — ActiveRecord, service objects, and a strict layering convention: controllers are thin, all business logic lives in `app/services/`
+- **PostgreSQL** — `SELECT FOR UPDATE` row-level locking for concurrency; append-only ledger rows for financial audit trail
+- **Stripe** — webhook-driven payment processing with idempotency keys; `StripeEvent.processed_at` prevents double-processing on retry
+- **Sidekiq + Redis** — async processing for Stripe webhooks and post-auction finalization
+- **Minitest** — test-first discipline on anything touching credits or auctions; no business logic ships without a test
+
+I chose Stripe's webhook model over polling because the idempotency guarantees are built in — Stripe will retry failed webhooks, and the `processed_at` pattern means replays are safe.
+
+## The Hard Part
+
+The hardest problem was **the credits ledger under concurrent load**. The naive approach — read current balance, check if sufficient, debit — has a classic TOCTOU race condition. Two bids placed simultaneously can both read a balance of 100, both pass the check, and both debit, leaving the user at -100.
+
+The solution has three layers:
+
+1. **Append-only ledger** — `CreditTransaction` rows are never updated or deleted. The current balance is always computed as `SUM(amount)` over the ledger. This makes the audit trail unimpeachable and avoids the "update a balance column" race entirely.
+2. **Lock ordering** — every operation that touches both a user and an auction acquires locks in a fixed order (`user → auction`, enforced via `LockOrder.with_user_then_auction`). This prevents deadlocks under concurrent load.
+3. **Retry with backoff** — `PlaceBid` retries up to `MAX_RETRIES = 3` times on lock contention, then returns a structured `ServiceResult` error the UI can surface meaningfully.
+
+The second hard problem was **multi-storefront isolation**. Each request sets `Current.storefront_key` via middleware, and every query is scoped to that key. A data leak between storefronts would be a serious trust failure. The pattern was validated with dedicated cross-storefront security tests — not just happy-path tests.
+
+## Results
+
+- Zero financial bugs in production: the append-only ledger has made every credits discrepancy debuggable from the audit trail alone
+- Concurrency-safe bidding under simulated load (threaded test suite hitting `PlaceBid` simultaneously)
+- Full Stripe webhook pipeline with idempotency: replaying any webhook is safe
+- [TODO: add performance metrics and screenshots]

@@ -1,0 +1,41 @@
+---
+title: Frankly
+tagline: A Ruby gem that scaffolds a production-ready Sinatra + ActiveRecord app in seconds, with sensible defaults, because not every project needs Rails.
+description: Open-source Ruby gem for bootstrapping Sinatra + ActiveRecord web apps with sensible defaults. 25,000+ downloads.
+stack: ['Ruby', 'Sinatra', 'ActiveRecord', 'Thor', 'RSpec']
+date: 2026-02-25
+order: 5
+links:
+  gem: https://rubygems.org/gems/frankly
+---
+
+## The Problem
+
+Rails is powerful, but it's also opinionated, heavy, and slow to boot for small APIs and internal tools. When I teaching web development I kept starting the same Sinatra + ActiveRecord scaffold from scratch, wiring up migrations, environment config, and a sensible folder structure, I realized the setup itself was the problem worth solving, both for me, _and_ my students.
+
+**The gap:** Sinatra has no official generator. Every lightweight Ruby project starts the same copy-paste ritual.
+
+## The Stack
+
+- **Sinatra** — lightweight HTTP routing without Rails convention overhead
+- **ActiveRecord** — familiar ORM, works standalone outside Rails
+- **Thor** — battle-tested CLI framework used by Rails itself, handles argument parsing and file generation
+- **RSpec** — test suite is generated with the app, so there's no excuse not to test from day one
+
+I chose Thor specifically over optparse or dry-cli because it handles subcommands cleanly and the DSL reads like documentation.
+
+## The Hard Part
+
+The trickiest piece was generating a project that *felt* properly set up, not just files dropped in a folder. That meant:
+
+1. **Conditional file generation** — the CLI needed to ask questions and branch on answers (PostgreSQL vs SQLite, RSpec vs Minitest) without becoming unmaintainable
+2. **Idempotency** — running the generator twice shouldn't corrupt the project; files that exist should be skipped or warn
+3. **ActiveRecord standalone wiring** — AR outside Rails needs explicit `establish_connection` config, a Rakefile for migrations, and a `db/` structure that won't confuse developers. Getting this right took the most iteration.
+
+The solution was a strict separation between the template files and the generator logic, templates are ERB files that get rendered into the target directory, and the generator is pure Thor with no business logic in the templates.
+
+## Results
+
+- **25,000+ downloads** across all versions. All organic adoption with no marketing
+- Used internally on several personal projects where Rails would have been overkill
+- Maintains a clean public API: one command, sensible defaults, no questions asked unless you want them

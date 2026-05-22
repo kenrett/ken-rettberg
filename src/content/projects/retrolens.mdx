@@ -1,0 +1,43 @@
+---
+title: RetroLens
+tagline: A spoiler-safe search engine. You set where you are in a show or NBA game, it filters the entire web to match.
+description: AI-powered search tool that prevents TV and sports spoilers by combining TMDB episode data, date-filtered web results, and an LLM classifier.
+stack: ['Next.js 15', 'TypeScript', 'Tailwind CSS', 'shadcn/ui', 'Claude Haiku', 'TMDB API', 'Serper.dev']
+date: 2025-09-01
+order: 4
+links: {}
+---
+
+## The Problem
+
+Catching up on a show or sports season while avoiding spoilers is a solved problem only if you stay off the internet entirely. One mistyped search query and it's over. Existing solutions (browser extensions, "spoiler-free" modes) are blunt instruments, they either block too much or miss obvious spoilers in metadata and result snippets.
+
+The specific constraint I wanted to solve: **let the user search normally, but have the system guarantee safety based on where they actually are in the content.**
+
+## The Stack
+
+- **Next.js 15 App Router** — server components made the API orchestration layer clean; no separate backend needed
+- **TMDB API** — episode air dates are the source of truth for the "safety cutoff"
+- **Serper.dev** — Google search results via API, with date-filtering support
+- **Claude Haiku** — fast, cheap LLM for contextual spoiler classification where date filters alone aren't enough
+- **shadcn/ui + Tailwind** — component library with zero style decisions I had to fight
+
+The AI integration here isn't the main character, it's the last line of defense in a deliberate three-layer pipeline.
+
+## The Hard Part
+
+The pipeline has three layers, and each one failing silently would break the safety guarantee:
+
+1. **Hard cutoff** — any result with a publication date after the episode air date is blocked entirely, no exceptions
+2. **Heuristic rules** — title and snippet patterns that flag obvious spoilers (character names in result titles, "dies", "season finale", etc.)
+3. **LLM classifier** — Claude Haiku evaluates ambiguous results that passed the date filter but might contain future-knowledge spoilers embedded in older content (e.g., a pre-airing "what to expect" article that references later events)
+
+The hardest design decision was **layer ordering**. Running the LLM on every result would be accurate but expensive and slow. Running it first would waste tokens on results that the date filter would eliminate anyway. The three-stage funnel: hard block → heuristics → LLM, keeps Haiku calls to a minimum while maintaining safety guarantees.
+
+The other challenge: TMDB's air dates are in UTC, but "aired" is a fuzzy concept (US East vs West Coast vs international). I built in a 24-hour grace period buffer that can be adjusted per user.
+
+## Results
+
+- End-to-end latency under 2 seconds for most queries (including the Haiku classification pass)
+- Correctly filtered 100% of obvious spoilers in manual testing across Breaking Bad, Succession, and NBA playoffs content
+- [TODO: add demo recording]

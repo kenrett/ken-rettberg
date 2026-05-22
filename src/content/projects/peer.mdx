@@ -1,0 +1,42 @@
+---
+title: Peer
+tagline: A trust-gated interview intelligence PWA, your interview notes stay private until both parties vouch for each other.
+description: Privacy-first interview intelligence platform where sensitive hiring data is only shared between mutually vouched users. Rails 8 API + Next.js 16 PWA.
+stack: ['Rails 8', 'Next.js 16', 'PostgreSQL', 'Redis', 'Devise', 'Tailwind CSS v4', 'Playwright', 'Docker']
+date: 2026-01-01
+order: 3
+links: {}
+---
+
+## The Problem
+
+Interview intelligence, notes on companies, interviewers, and compensation benchmarks, are genuinely valuable. But it's also sensitive. Existing tools either make everything public (Glassdoor) or lock it in your own notes app where it can't help anyone else.
+
+The missing piece: **a trust layer**. You should be able to share notes with someone you've vouched for, and only with them.
+
+Backchannel's core mechanic is mutual vouching: your data is invisible to another user until *both* of you explicitly vouch for each other. No algorithmic "connections," no one-sided follows.
+
+## The Stack
+
+- **Rails 8 API** — API-only mode with Devise for authentication, Pundit for authorization. Rails was the right call: the trust graph logic and data model are complex, and ActiveRecord + a proper ORM made the relationship queries tractable.
+- **Next.js 16 PWA** — Tailwind v4 (the new `@import "tailwindcss"` + `@theme {}` CSS-first config), installable on mobile. Service worker handles offline gracefully.
+- **PostgreSQL + Redis** — Postgres for the relational data model (users, vouches, notes, connections); Redis for session state and Sidekiq jobs
+- **Docker Compose** — full dev environment in one command; API, Postgres, and Redis all containerized. Next.js dev server runs on the host.
+- **Playwright** — end-to-end smoke tests against the full stack; runs on the host against the Dockerized API
+
+I chose Next.js 16 over a native mobile app because the PWA install flow covers 80% of the "app feel" use case with a single codebase.
+
+## The Hard Part
+
+The hardest piece was **the trust graph data model and its authorization rules**. A vouch is directional (A vouches for B, B vouches for A — independently), but access is bilateral. The query to determine "can user A see user B's notes" has to be efficient at scale, not an N+1 trap.
+
+The solution: a denormalized `connections` table that gets written whenever a mutual vouch is established (via an `after_commit` callback on the `Vouch` model). Reads hit the `connections` table — a single indexed lookup. Writes are async and idempotent. This separates read latency from write complexity.
+
+The second hard problem was **Devise 5 + API mode quirks**. Devise 5 removed some autoloading that worked implicitly in earlier versions. Getting session-less token auth working alongside CSRF-exempt API endpoints required explicitly requiring `devise/orm/active_record` in the initializer and auditing every ApplicationController concern.
+
+## Results
+
+- Full MVP scaffold: auth, vouch graph, note creation, connection feed
+- E2E smoke tests covering the critical user journey (sign up → vouch → data visibility)
+- PWA installable on iOS and Android with offline support
+- [TODO: add demo recording]

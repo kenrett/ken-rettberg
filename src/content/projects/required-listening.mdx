@@ -1,0 +1,45 @@
+---
+title: Required Listening
+tagline: Timestamped annotation for music — leave a note at exactly 2:34 of a track, tied to what's playing right now in Spotify.
+description: Spotify-integrated music annotation app with real-time playback sync, timestamped notes, and a two-cookie auth system with breach detection.
+stack: ['Rails 8', 'React 19', 'TypeScript', 'Vite', 'Spotify OAuth', 'PostgreSQL', 'Vitest']
+date: 2025-10-01
+order: 2
+links: {}
+---
+
+## The Problem
+
+I wanted to leave notes tied to specific moments in music. Not "this album is good" but _"this chord change at 2:34 is why this song works."_ Spotify's app has no annotation layer. Genius exists for lyrics but not for listener notes. The gap was clear.
+
+The secondary challenge: notes are only useful if they're tied to the *exact playback position*, which means the app has to know where you are in a track in real time.
+
+## The Stack
+
+- **Rails 8 API** — API-only mode, handling auth, Spotify token management, and notes persistence. Spotify access/refresh tokens are stored server-side and never sent to the browser.
+- **React 19 + Vite** — fast HMR dev experience; React 19 concurrent features made the real-time playback polling feel smooth
+- **Spotify OAuth + Playback API** — the standard OAuth 2.0 PKCE flow for authorization; polling the Spotify `/me/player` endpoint for current position
+- **Two-cookie auth** — `jwt` (15-min HS256, HttpOnly) + `refresh_token` (30-day opaque, HttpOnly). Refresh tokens rotate on use for breach detection: if a stolen token is used after rotation, the old token is invalidated and the active session is revoked.
+- **Vitest** — 74 unit tests covering the auth flow, token rotation, and Spotify proxy layer
+
+The "no tokens in the browser" constraint shaped the entire architecture: the API acts as a Spotify proxy, the frontend only ever holds a short-lived JWT.
+
+## The Hard Part
+
+The real-time playback position problem is harder than it looks. The Spotify API doesn't push updates, you have to poll. But polling every 100ms would hammer the API and drain battery. Polling every 5 seconds feels laggy.
+
+The solution was `useNowPlayingPoller`: a hook that uses `requestAnimationFrame` to *interpolate* position between API polls, combined with an adaptive polling interval:
+- **1 second** while actively playing
+- **3 seconds** during fast interaction bursts (scrubbing)
+- **30 seconds** when idle/paused
+
+This means the UI shows smooth millisecond-accurate position updates without excessive API calls. The interpolation math is simple: `currentTime = lastKnownPosition + (Date.now() - lastPollTimestamp)`.
+
+The second hard part was the OAuth callback dance. Spotify redirects to the frontend, but the auth tokens need to live server-side. The solution: Spotify's callback issues a 30-second, single-use exchange code. The frontend calls `GET /auth/exchange` with that code, the API validates it and sets HttpOnly cookies. The exchange code is stored in Redis with a 30-second TTL.
+
+## Results
+
+- Auth system with full breach detection (stolen refresh token detection via rotation invalidation)
+- Real-time playback sync accurate to ~100ms via RAF interpolation
+- 74 passing Vitest tests covering the critical auth and playback paths
+- [TODO: add demo recording]
