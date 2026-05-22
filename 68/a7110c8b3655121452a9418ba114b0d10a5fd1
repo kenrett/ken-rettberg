@@ -1,0 +1,26 @@
+src/styles/global.css
+  s_141d658a0b45a9::t_c919724d42dc60 2
+src/content.config.ts
+  s_141d658a0b45a9::t_0fc8431ab7c5ef 1-23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.0",
+  "base_commit_sha": "68a7110c8b3655121452a9418ba114b0d10a5fd1",
+  "prompts": {},
+  "humans": {
+    "h_074f4115c47cea": {
+      "author": "Ken Rettberg <kenrettberg@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_141d658a0b45a9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f647c913-5754-4e47-afee-48cb86685116",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Ken Rettberg <kenrettberg@gmail.com>"
+    }
+  }
+}
