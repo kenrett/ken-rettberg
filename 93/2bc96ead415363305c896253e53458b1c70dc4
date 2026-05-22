@@ -1,0 +1,32 @@
+src/content/projects/peer.mdx
+  h_074f4115c47cea 1-42
+src/content/projects/retrolens.mdx
+  s_141d658a0b45a9::t_079a0e2dd96462 1-2,4-6,8-12,14-24,26-34,36-43
+  h_074f4115c47cea 3,7,13,25,35
+src/content/projects/required-listening.mdx
+  s_141d658a0b45a9::t_a045c43ad22255 1-6,8-12,14-28,30-45
+  h_074f4115c47cea 7,13,29
+src/content/projects/frankly.mdx
+  h_074f4115c47cea 1-41
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.0",
+  "base_commit_sha": "932bc96ead415363305c896253e53458b1c70dc4",
+  "prompts": {},
+  "humans": {
+    "h_074f4115c47cea": {
+      "author": "Ken Rettberg <kenrettberg@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_141d658a0b45a9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f647c913-5754-4e47-afee-48cb86685116",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Ken Rettberg <kenrettberg@gmail.com>"
+    }
+  }
+}
