@@ -1,0 +1,64 @@
+src/components/ProjectCard.astro
+  s_9df63a0607179d::t_40690a7e4dcaa8 6,9,13,18,35,47,49,62,68,73-74
+  s_9df63a0607179d::t_e014e11e001271 10,12,20-34,42-43
+src/content/projects/frankly.mdx
+  s_9df63a0607179d::t_abe2783a227926 10-11
+src/pages/index.astro
+  s_9df63a0607179d::t_7240998357283a 8-18,23-31,33-37,39-42,44-49,51-62,64-70,76,78-80,87,93-94,96,99-100,110
+src/content/projects/peer.mdx
+  s_9df63a0607179d::t_c5495c93497464 10-11
+public/logos/frankly.svg
+  s_141d658a0b45a9::t_75226a845e6b79 1-4
+src/styles/global.css
+  s_9df63a0607179d::t_65861dc1ce5710 8,13-14,18-88
+src/content/projects/retrolens.mdx
+  s_9df63a0607179d::t_24d84a36b39717 10-11
+public/logos/peer.svg
+  s_141d658a0b45a9::t_f5cca70e1b2f51 454
+public/logos/biddersweet.svg
+  s_141d658a0b45a9::t_10a826599ea0c3 40
+src/content.config.ts
+  s_9df63a0607179d::t_7ab7d2a3718750 15-16
+src/content/projects/biddersweet.mdx
+  s_9df63a0607179d::t_f3afe8045a143f 10-11
+src/pages/projects/[slug].astro
+  s_9df63a0607179d::t_0210b698f694fa 167
+  s_9df63a0607179d::t_abc17c9cae7f78 15,18-28,45-55,58,73,75-76,84-85,93-94,105-149,153,158-159,165-166
+  s_9df63a0607179d::t_9cfaffceccf0dc 64-65
+src/layouts/Layout.astro
+  s_9df63a0607179d::t_a40e531eff7be0 16,28-30,43-44,46,56,68,78,85,95-96,98
+src/content/projects/required-listening.mdx
+  s_9df63a0607179d::t_09e4ccf94f5ea0 11
+  h_074f4115c47cea 10
+public/logos/retrolens.svg
+  s_141d658a0b45a9::t_e841e90e0d9ed3 1-231
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.0",
+  "base_commit_sha": "cc017be563b07b89021d3e414d0baf596bd78b8a",
+  "prompts": {},
+  "humans": {
+    "h_074f4115c47cea": {
+      "author": "Ken Rettberg <kenrettberg@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_141d658a0b45a9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f647c913-5754-4e47-afee-48cb86685116",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Ken Rettberg <kenrettberg@gmail.com>"
+    },
+    "s_9df63a0607179d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6b507192-7623-48a0-adc7-d11ff2e3163c",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Ken Rettberg <kenrettberg@gmail.com>"
+    }
+  }
+}
