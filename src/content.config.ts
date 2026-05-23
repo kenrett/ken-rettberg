@@ -10,6 +10,8 @@ const projects = defineCollection({
     stack: z.array(z.string()),
     date: z.coerce.date(),
     order: z.number().default(99),
+    logo: z.string().optional(),
+    accent: z.string().default('#6366f1'),
     links: z
       .object({
         github: z.string().url().optional(),
