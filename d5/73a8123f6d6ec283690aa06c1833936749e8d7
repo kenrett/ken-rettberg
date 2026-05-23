@@ -1,0 +1,51 @@
+public/logos/required-listening.svg
+  s_141d658a0b45a9::t_504c2fd43040ce 5
+  s_141d658a0b45a9::t_4b45e09f5ec0ae 1-4
+src/content/projects/biddersweet.mdx
+  s_141d658a0b45a9::t_a66de5e2de08d8 8
+  s_141d658a0b45a9::t_bbba3f6d71cf03 9
+src/content/projects/peer.mdx
+  s_141d658a0b45a9::t_df21bc10a8d002 9
+  s_141d658a0b45a9::t_499f29d47f01f4 8
+src/content/projects/frankly.mdx
+  s_141d658a0b45a9::t_d48a2ab88f9ce2 9
+  s_141d658a0b45a9::t_6a0f2788fed03f 8
+src/content.config.ts
+  s_141d658a0b45a9::t_ed321df7a0fda1 13
+  s_141d658a0b45a9::t_ba0f99f7a96967 14
+src/content/projects/required-listening.mdx
+  s_141d658a0b45a9::t_76c8d141ca00f9 8
+  s_141d658a0b45a9::t_d89fc1b1c1a8b3 9
+src/components/ProjectCard.astro
+  s_141d658a0b45a9::t_39eefdcf121f15 9-18,23-24,26-28,41,56,68-71
+  s_141d658a0b45a9::t_52e7b2e22485fd 29,31
+  s_141d658a0b45a9::t_632762002438a1 30,32-40,42,46-55,57-59,62-64,66-67,72-75
+  s_141d658a0b45a9::t_e79b9651bf9e6e 43
+  s_141d658a0b45a9::t_6c96df8d9fb6e5 44-45,60
+src/content/projects/retrolens.mdx
+  s_141d658a0b45a9::t_1c996524e02116 9
+  s_141d658a0b45a9::t_8bb0508484e978 8
+src/pages/index.astro
+  s_141d658a0b45a9::t_26696171c2dcc4 12-33,36-41,43-61,67-69
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.0",
+  "base_commit_sha": "d573a8123f6d6ec283690aa06c1833936749e8d7",
+  "prompts": {},
+  "humans": {
+    "h_074f4115c47cea": {
+      "author": "Ken Rettberg <kenrettberg@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_141d658a0b45a9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f647c913-5754-4e47-afee-48cb86685116",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Ken Rettberg <kenrettberg@gmail.com>"
+    }
+  }
+}
