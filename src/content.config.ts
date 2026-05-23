@@ -12,6 +12,8 @@ const projects = defineCollection({
     order: z.number().default(99),
     logo: z.string().optional(),
     accent: z.string().default('#6366f1'),
+    screenshots: z.array(z.string()).optional().default([]),
+    demoVideo: z.string().optional(),
     links: z
       .object({
         github: z.string().url().optional(),

@@ -5,19 +5,86 @@
 
 @layer base {
   html {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
-  code,
-  pre,
-  kbd {
-    font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
+  code, pre, kbd {
+    font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
     font-size: 0.875em;
   }
 
-  * {
-    scroll-behavior: smooth;
+  * { scroll-behavior: smooth; }
+}
+
+@layer components {
+  .btn-solid {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.375rem;
+    border-radius: 0.75rem;
+    background-color: #1a1a1a;
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 3px 0 #000, 0 5px 14px rgba(0,0,0,0.18);
+  }
+  .btn-solid:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 0 #000, 0 10px 22px rgba(0,0,0,0.22);
+  }
+
+  .btn-outline {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.375rem;
+    border-radius: 0.75rem;
+    background-color: #fff;
+    color: #1a1a1a;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    border: 2px solid #e0e0e0;
+    transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+    box-shadow: 0 3px 0 #e0e0e0;
+  }
+  .btn-outline:hover {
+    transform: translateY(-2px);
+    border-color: #bbb;
+    box-shadow: 0 5px 0 #bbb;
+  }
+
+  /* Colorful tech tag palette */
+  .tag-0 { background-color: #fef3c7; color: #92400e; }
+  .tag-1 { background-color: #dbeafe; color: #1e40af; }
+  .tag-2 { background-color: #ede9fe; color: #5b21b6; }
+  .tag-3 { background-color: #fce7f3; color: #9d174d; }
+  .tag-4 { background-color: #d1fae5; color: #065f46; }
+  .tag-5 { background-color: #ffedd5; color: #9a3412; }
+  .tag-6 { background-color: #cffafe; color: #155e75; }
+  .tag-7 { background-color: #fee2e2; color: #991b1b; }
+
+  /* Highlight mark behind text */
+  .text-mark {
+    position: relative;
+    display: inline-block;
+  }
+  .text-mark::after {
+    content: '';
+    position: absolute;
+    bottom: 6px;
+    left: -3px;
+    right: -3px;
+    height: 16px;
+    background: linear-gradient(90deg, #fbbf24, #f97316);
+    z-index: -1;
+    border-radius: 3px;
+    opacity: 0.38;
+    transform: rotate(-0.7deg);
   }
 }
