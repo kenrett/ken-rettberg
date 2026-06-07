@@ -1,17 +1,40 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+@theme {
+  --color-brand-black: #000000;
+  --color-card-bg: #121214;
+  --color-card-footer: #18181b;
+  --color-card-border: #27272a;
+  
+  --color-neon-green: #00ff87;
+  --color-neon-cyan: #00e5ff;
+  --color-neon-pink: #ff007f;
+  --color-neon-yellow: #ffdf00;
+  --color-neon-purple: #bd00ff;
+  --color-neon-orange: #ff6c00;
+
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
 @variant dark (&:where(.dark, .dark *));
 
 @layer base {
   html {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    background-color: #000000;
+  }
+
+  body {
+    background-color: #000000;
+    color: #e4e4e7;
   }
 
   code, pre, kbd {
-    font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+    font-family: var(--font-mono);
     font-size: 0.875em;
   }
 
@@ -19,72 +42,142 @@
 }
 
 @layer components {
-  .btn-solid {
+  /* Navigation & General Buttons */
+  .btn-pill {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.7rem 1.375rem;
-    border-radius: 0.75rem;
-    background-color: #1a1a1a;
-    color: #fff;
-    font-size: 0.875rem;
+    padding: 0.6rem 1.25rem;
+    border-radius: 9999px;
+    background-color: #18181b;
+    color: #ffffff;
+    font-size: 0.8125rem;
     font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border: 1px solid #27272a;
     text-decoration: none;
-    transition: transform 0.15s, box-shadow 0.15s;
-    box-shadow: 0 3px 0 #000, 0 5px 14px rgba(0,0,0,0.18);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  .btn-solid:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 0 #000, 0 10px 22px rgba(0,0,0,0.22);
+  
+  .btn-pill:hover {
+    background-color: #27272a;
+    border-color: #3f3f46;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   }
 
-  .btn-outline {
-    display: inline-flex;
+  /* Interactive Arrow Button for Card */
+  .btn-arrow-circle {
+    display: flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.7rem 1.375rem;
-    border-radius: 0.75rem;
-    background-color: #fff;
-    color: #1a1a1a;
-    font-size: 0.875rem;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 9999px;
+    background-color: #000000;
+    color: #ffffff;
+    border: 1px solid #27272a;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  .group:hover .btn-arrow-circle {
+    background-color: #ffffff;
+    color: #000000;
+    border-color: #ffffff;
+    transform: scale(1.05);
+  }
+
+  /* Neon Badges styling */
+  .neon-badge-green {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
     font-weight: 600;
-    text-decoration: none;
-    border: 2px solid #e0e0e0;
-    transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
-    box-shadow: 0 3px 0 #e0e0e0;
-  }
-  .btn-outline:hover {
-    transform: translateY(-2px);
-    border-color: #bbb;
-    box-shadow: 0 5px 0 #bbb;
+    letter-spacing: 0.05em;
+    color: var(--color-neon-green);
+    background-color: rgba(0, 255, 135, 0.06);
+    border: 1px solid rgba(0, 255, 135, 0.25);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
   }
 
-  /* Colorful tech tag palette */
-  .tag-0 { background-color: #fef3c7; color: #92400e; }
-  .tag-1 { background-color: #dbeafe; color: #1e40af; }
-  .tag-2 { background-color: #ede9fe; color: #5b21b6; }
-  .tag-3 { background-color: #fce7f3; color: #9d174d; }
-  .tag-4 { background-color: #d1fae5; color: #065f46; }
-  .tag-5 { background-color: #ffedd5; color: #9a3412; }
-  .tag-6 { background-color: #cffafe; color: #155e75; }
-  .tag-7 { background-color: #fee2e2; color: #991b1b; }
-
-  /* Highlight mark behind text */
-  .text-mark {
-    position: relative;
-    display: inline-block;
+  .neon-badge-cyan {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--color-neon-cyan);
+    background-color: rgba(0, 229, 255, 0.06);
+    border: 1px solid rgba(0, 229, 255, 0.25);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
   }
-  .text-mark::after {
-    content: '';
-    position: absolute;
-    bottom: 6px;
-    left: -3px;
-    right: -3px;
-    height: 16px;
-    background: linear-gradient(90deg, #fbbf24, #f97316);
-    z-index: -1;
-    border-radius: 3px;
-    opacity: 0.38;
-    transform: rotate(-0.7deg);
+
+  .neon-badge-pink {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--color-neon-pink);
+    background-color: rgba(255, 0, 127, 0.06);
+    border: 1px solid rgba(255, 0, 127, 0.25);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+  }
+
+  .neon-badge-yellow {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--color-neon-yellow);
+    background-color: rgba(255, 223, 0, 0.06);
+    border: 1px solid rgba(255, 223, 0, 0.25);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+  }
+  
+  .neon-badge-purple {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--color-neon-purple);
+    background-color: rgba(189, 0, 255, 0.06);
+    border: 1px solid rgba(189, 0, 255, 0.25);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+  }
+  
+  .neon-badge-orange {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--color-neon-orange);
+    background-color: rgba(255, 108, 0, 0.06);
+    border: 1px solid rgba(255, 108, 0, 0.25);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+  }
+
+  /* Slow floating animations for cosmic background glows */
+  @keyframes float-slow-1 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(50px, -40px) scale(1.1); }
+  }
+  
+  @keyframes float-slow-2 {
+    0%, 100% { transform: translate(0, 0) scale(1.15); }
+    50% { transform: translate(-60px, 30px) scale(0.95); }
+  }
+
+  .animate-float-1 {
+    animation: float-slow-1 22s infinite ease-in-out;
+  }
+  
+  .animate-float-2 {
+    animation: float-slow-2 28s infinite ease-in-out;
   }
 }
+

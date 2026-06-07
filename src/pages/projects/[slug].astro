@@ -26,6 +26,16 @@ function getVideoEmbed(url: string): string | null {
 
 const videoEmbed = demoVideo ? getVideoEmbed(demoVideo) : null;
 const isDirectVideo = demoVideo && !videoEmbed;
+
+const projectBadgeClasses = {
+  'antisocial': 'neon-badge-green',
+  'retrolens': 'neon-badge-cyan',
+  'frankly': 'neon-badge-pink',
+  'biddersweet': 'neon-badge-yellow',
+  'peer': 'neon-badge-purple',
+  'required-listening': 'neon-badge-orange'
+};
+const badgeClass = projectBadgeClasses[project.id as keyof typeof projectBadgeClasses] || 'neon-badge-green';
 ---
 
 <Layout title={`${title} — Ken Rettberg`} description={description}>
@@ -33,9 +43,9 @@ const isDirectVideo = demoVideo && !videoEmbed;
     <!-- Back -->
     <a
       href="/#projects"
-      class="inline-flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-500 hover:text-gray-900 dark:hover:text-gray-300 transition-colors mb-12"
+      class="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider text-gray-400 hover:text-white transition-colors mb-12"
     >
-      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="m15 18-6-6 6-6"/>
       </svg>
       All projects
@@ -45,24 +55,24 @@ const isDirectVideo = demoVideo && !videoEmbed;
     <header class="mb-10">
       <div class="flex items-center gap-3 mb-4">
         {logo && (
-          <div class="h-10 w-10 rounded-xl bg-gray-50 dark:bg-white/8 border border-black/8 dark:border-white/8 flex items-center justify-center p-2 shrink-0">
+          <div class="h-10 w-10 rounded-xl bg-zinc-900 border border-[#27272a] flex items-center justify-center p-2 shrink-0">
             <img src={logo} alt={`${title} logo`} class="w-full h-full object-contain" />
           </div>
         )}
-        <p class="text-sm text-gray-400 dark:text-gray-500">{formattedDate}</p>
+        <p class="text-sm text-gray-500 font-mono">{formattedDate}</p>
       </div>
 
-      <h1 class="text-3xl sm:text-4xl font-extrabold text-[#1a1a1a] dark:text-gray-100 mb-4 tracking-tight">
+      <h1 class="text-3xl sm:text-4xl font-black text-white uppercase tracking-tight mb-4">
         {title}
       </h1>
-      <p class="text-lg text-gray-500 dark:text-gray-400 leading-relaxed mb-6">
+      <p class="text-lg text-gray-400 leading-relaxed mb-6 font-mono text-sm">
         {tagline}
       </p>
 
       <!-- Stack tags -->
       <div class="flex flex-wrap gap-2 mb-6">
-        {stack.map((tag, i) => (
-          <span class={`tag-${i % 8} inline-block px-2.5 py-1 rounded-lg text-xs font-medium`}>
+        {stack.map((tag) => (
+          <span class={badgeClass}>
             {tag}
           </span>
         ))}
@@ -70,11 +80,11 @@ const isDirectVideo = demoVideo && !videoEmbed;
 
       <!-- Links -->
       {links && Object.values(links).some(Boolean) && (
-        <div class="flex flex-wrap gap-4">
+        <div class="flex flex-wrap gap-4 pt-2">
           {links.demo && (
             <a href={links.demo} target="_blank" rel="noopener noreferrer"
-              class="inline-flex items-center gap-1.5 text-sm font-semibold text-[#1a1a1a] dark:text-gray-200 hover:opacity-70 transition-opacity">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              class="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider text-white hover:text-gray-300 transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/>
               </svg>
               Live demo
@@ -82,8 +92,8 @@ const isDirectVideo = demoVideo && !videoEmbed;
           )}
           {links.github && (
             <a href={links.github} target="_blank" rel="noopener noreferrer"
-              class="inline-flex items-center gap-1.5 text-sm font-semibold text-[#1a1a1a] dark:text-gray-200 hover:opacity-70 transition-opacity">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              class="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider text-white hover:text-gray-300 transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
               </svg>
               View source
@@ -91,8 +101,8 @@ const isDirectVideo = demoVideo && !videoEmbed;
           )}
           {links.gem && (
             <a href={links.gem} target="_blank" rel="noopener noreferrer"
-              class="inline-flex items-center gap-1.5 text-sm font-semibold text-[#1a1a1a] dark:text-gray-200 hover:opacity-70 transition-opacity">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              class="inline-flex items-center gap-1.5 text-sm font-semibold text-white hover:text-gray-300 transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M2.7 10.3a2.41 2.41 0 0 0 0 3.41l7.59 7.59a2.41 2.41 0 0 0 3.41 0l7.59-7.59a2.41 2.41 0 0 0 0-3.41L13.7 2.71a2.41 2.41 0 0 0-3.41 0Z"/>
               </svg>
               RubyGems
@@ -104,7 +114,7 @@ const isDirectVideo = demoVideo && !videoEmbed;
 
     <!-- Demo video -->
     {demoVideo && (
-      <div class="mb-10 rounded-2xl overflow-hidden border border-black/8 dark:border-white/8 bg-black">
+      <div class="mb-10 rounded-2xl overflow-hidden border border-[#27272a] bg-zinc-950">
         {videoEmbed ? (
           <div class="relative" style="padding-bottom: 56.25%;">
             <iframe
@@ -129,11 +139,11 @@ const isDirectVideo = demoVideo && !videoEmbed;
       <div class="mb-10">
         <div class={screenshots.length === 1
           ? ''
-          : 'grid grid-cols-1 sm:grid-cols-2 gap-3'
+          : 'grid grid-cols-1 sm:grid-cols-2 gap-4'
         }>
           {screenshots.map((src, i) => (
             <a href={src} target="_blank" rel="noopener noreferrer"
-              class="block rounded-xl overflow-hidden border border-black/8 dark:border-white/8 bg-gray-50 dark:bg-white/4 hover:opacity-95 transition-opacity">
+              class="block rounded-xl overflow-hidden border border-[#27272a] bg-[#121214] hover:opacity-90 transition-opacity">
               <img
                 src={src}
                 alt={`${title} screenshot ${i + 1}`}
@@ -146,26 +156,26 @@ const isDirectVideo = demoVideo && !videoEmbed;
       </div>
     )}
 
-    <hr class="border-black/8 dark:border-white/8 mb-10" />
+    <hr class="border-[#27272a] mb-10" />
 
     <!-- MDX Content -->
-    <div class="prose prose-gray dark:prose-invert max-w-none
-      prose-headings:font-bold prose-headings:tracking-tight
-      prose-h2:text-xl prose-h2:mt-10 prose-h2:mb-4
-      prose-p:leading-relaxed prose-p:text-gray-600 dark:prose-p:text-gray-400
-      prose-li:text-gray-600 dark:prose-li:text-gray-400
-      prose-strong:text-gray-900 dark:prose-strong:text-gray-100
-      prose-code:text-[#1a1a1a] dark:prose-code:text-gray-200 prose-code:bg-black/6 dark:prose-code:bg-white/8 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md prose-code:text-sm prose-code:font-normal prose-code:before:content-none prose-code:after:content-none
-      prose-a:text-[#1a1a1a] dark:prose-a:text-gray-200 prose-a:font-semibold prose-a:no-underline hover:prose-a:underline
+    <div class="prose prose-zinc prose-invert max-w-none
+      prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-white prose-headings:uppercase
+      prose-h2:text-lg prose-h2:mt-10 prose-h2:mb-4 prose-h2:font-mono
+      prose-p:leading-relaxed prose-p:text-gray-400
+      prose-li:text-gray-400
+      prose-strong:text-white
+      prose-code:text-white prose-code:bg-zinc-900 prose-code:border prose-code:border-zinc-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md prose-code:text-sm prose-code:font-mono prose-code:before:content-none prose-code:after:content-none
+      prose-a:text-white prose-a:font-semibold prose-a:underline hover:text-gray-300
     ">
       <Content />
     </div>
 
     <!-- Footer CTA -->
-    <div class="mt-16 pt-8 border-t border-black/8 dark:border-white/8">
-      <p class="text-sm text-gray-400 dark:text-gray-500 mb-4">Interested in working together?</p>
-      <a href="mailto:kenrettberg@gmail.com" class="btn-solid">
-        Get in touch
+    <div class="mt-16 pt-8 border-t border-[#27272a]">
+      <p class="text-sm text-gray-500 mb-4 font-mono">Interested in working together?</p>
+      <a href="mailto:kenrettberg@gmail.com" class="btn-pill">
+        Get in touch <span class="text-gray-500 font-mono">→</span>
       </a>
     </div>
   </article>

@@ -7,74 +7,134 @@ interface Props {
 }
 
 const { project, index } = Astro.props;
-const { title, tagline, stack, logo, accent, screenshots } = project.data;
+const { title, tagline, stack, screenshots } = project.data;
 
 const coverShot = screenshots?.[0];
-const tagColorStart = (index * 3) % 8;
+
+// Custom theme metadata for each project to achieve the Option B look
+const projectMeta = {
+  'antisocial': {
+    category: 'SOCIAL PLATFORM',
+    gradient: 'from-emerald-500/20 via-teal-500/10 to-indigo-500/5',
+    borderColor: 'hover:border-neon-green/30',
+    badgeClass: 'neon-badge-green'
+  },
+  'retrolens': {
+    category: 'SPOILER-FREE SEARCH ENGINE',
+    gradient: 'from-sky-500/20 via-blue-500/10 to-purple-500/5',
+    borderColor: 'hover:border-neon-cyan/30',
+    badgeClass: 'neon-badge-cyan'
+  },
+  'frankly': {
+    category: 'SINATRA SCAFFOLD RUBY GEM',
+    gradient: 'from-rose-500/20 via-pink-500/10 to-amber-500/5',
+    borderColor: 'hover:border-neon-pink/30',
+    badgeClass: 'neon-badge-pink'
+  },
+  'biddersweet': {
+    category: 'PENNY AUCTION PLATFORM',
+    gradient: 'from-amber-500/20 via-orange-500/10 to-red-500/5',
+    borderColor: 'hover:border-neon-yellow/30',
+    badgeClass: 'neon-badge-yellow'
+  },
+  'peer': {
+    category: 'INTERVIEW SHARING PLATFORM',
+    gradient: 'from-purple-500/20 via-violet-500/10 to-indigo-500/5',
+    borderColor: 'hover:border-neon-purple/30',
+    badgeClass: 'neon-badge-purple'
+  },
+  'required-listening': {
+    category: 'MUSIC SHARING WITH CONTEXT',
+    gradient: 'from-rose-500/20 via-pink-500/10 to-red-500/5',
+    borderColor: 'hover:border-neon-orange/30',
+    badgeClass: 'neon-badge-orange'
+  }
+};
+
+const meta = projectMeta[project.id as keyof typeof projectMeta] || {
+  category: 'PROJECT',
+  gradient: 'from-zinc-800/20 via-zinc-700/10 to-zinc-900/5',
+  borderColor: 'hover:border-zinc-500/30',
+  badgeClass: 'neon-badge-green'
+};
 ---
 
 <a
   href={`/projects/${project.id}`}
-  class="group flex flex-col rounded-2xl border border-black/8 dark:border-white/8 bg-white dark:bg-white/4 overflow-hidden transition-all duration-200 hover:-translate-y-1.5 hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] dark:hover:shadow-[0_8px_30px_rgba(0,0,0,0.4)]"
+  class={`group flex flex-col rounded-2xl border border-[#27272a] bg-[#121214] overflow-hidden transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_12px_36px_rgba(0,0,0,0.8)] ${meta.borderColor}`}
 >
-  <!-- Visual header: screenshot with logo badge, or logo-only -->
-  {coverShot ? (
-    <div class="relative h-44 overflow-hidden bg-gray-100 dark:bg-white/6">
-      <img
-        src={coverShot}
-        alt={`${title} screenshot`}
-        class="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
-      />
-      {logo && (
-        <div class="absolute bottom-3 left-3 h-8 w-8 rounded-lg bg-white shadow-md flex items-center justify-center p-1.5">
-          <img src={logo} alt={`${title} logo`} class="w-full h-full object-contain" />
-        </div>
-      )}
+  <!-- Visual header: screenshot simulated in browser/laptop on dynamic gradient -->
+  <div class={`relative h-48 flex items-center justify-center overflow-hidden bg-gradient-to-br ${meta.gradient} p-4 transition-all duration-300`}>
+    <div class="relative w-[85%] aspect-[16/10] bg-zinc-950 rounded-lg border border-zinc-800 shadow-2xl overflow-hidden flex flex-col transition-transform duration-500 group-hover:scale-[1.03]">
+      <!-- Browser title bar -->
+      <div class="h-4 bg-zinc-900 border-b border-zinc-800 px-2 flex items-center gap-1 shrink-0">
+        <div class="w-1 h-1 rounded-full bg-zinc-700"></div>
+        <div class="w-1 h-1 rounded-full bg-zinc-700"></div>
+        <div class="w-1 h-1 rounded-full bg-zinc-700"></div>
+      </div>
+      <!-- Content/Screenshot container -->
+      <div class="flex-1 bg-zinc-900 overflow-hidden relative">
+        {coverShot ? (
+          <img
+            src={coverShot}
+            alt={`${title} screenshot`}
+            class="w-full h-full object-cover object-top"
+          />
+        ) : (
+          <div class="w-full h-full flex items-center justify-center text-[10px] font-mono text-zinc-600 uppercase tracking-widest bg-zinc-950">
+            {title}
+          </div>
+        )}
+      </div>
     </div>
-  ) : logo ? (
-    <div class="flex items-center justify-center px-8 py-7 h-36 bg-gray-50 dark:bg-white/6">
-      <img
-        src={logo}
-        alt={`${title} logo`}
-        class="max-h-full max-w-full object-contain"
-      />
-    </div>
-  ) : (
-    <div class="h-2 w-full" style={`background-color: ${accent};`}></div>
-  )}
+  </div>
 
-  <!-- Card content -->
-  <div class="flex flex-col flex-1 p-5 border-t border-black/6 dark:border-white/6">
-    <div class="flex items-start justify-between gap-3 mb-2">
-      <h3 class="text-base font-bold text-[#1a1a1a] dark:text-gray-100 leading-snug tracking-tight">
-        {title}
-      </h3>
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="14"
-        height="14"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        class="shrink-0 mt-0.5 text-gray-300 dark:text-gray-600 group-hover:text-gray-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-200"
-      >
-        <path d="M7 7h10v10"/><path d="M7 17 17 7"/>
-      </svg>
+  <!-- Card content (charcoal footer) -->
+  <div class="flex flex-col flex-1 p-5 border-t border-[#27272a] bg-[#18181b]">
+    <!-- Neon Category Badge -->
+    <div class="flex items-start">
+      <span class={meta.badgeClass}>
+        [{meta.category}]
+      </span>
     </div>
 
-    <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed mb-4">
+    <!-- Title -->
+    <h3 class="text-base font-black text-white leading-snug tracking-wider uppercase mt-3 mb-1.5">
+      {title}
+    </h3>
+
+    <!-- Tagline -->
+    <p class="text-xs text-gray-400 font-mono leading-relaxed mb-5">
       {tagline}
     </p>
 
-    <div class="flex flex-wrap gap-1.5 mt-auto">
-      {stack.map((tag, i) => (
-        <span class={`tag-${(tagColorStart + i) % 8} inline-block px-2 py-0.5 rounded-md text-xs font-medium`}>
-          {tag}
-        </span>
-      ))}
+    <!-- Bottom border/actions -->
+    <div class="flex items-center justify-between border-t border-zinc-800/60 pt-4 mt-auto">
+      <div class="flex flex-wrap gap-1">
+        {stack.slice(0, 3).map((tag) => (
+          <span class="text-[9px] font-mono text-gray-500 bg-black/40 border border-zinc-800 px-2 py-0.5 rounded">
+            {tag}
+          </span>
+        ))}
+      </div>
+      
+      <!-- Arrow Action Button -->
+      <div class="btn-arrow-circle shrink-0">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="12"
+          height="12"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="3"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-200"
+        >
+          <path d="M7 7h10v10"/><path d="M7 17 17 7"/>
+        </svg>
+      </div>
     </div>
   </div>
 </a>
