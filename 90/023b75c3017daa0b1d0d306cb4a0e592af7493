@@ -1,0 +1,34 @@
+src/content/projects/peer.mdx
+  h_074f4115c47cea 10
+public/style-preview.html
+  s_9df63a0607179d::t_acf8d063860abc 1-617
+.claude/launch.json
+  s_9df63a0607179d::t_f7dca1eab1274d 1-11
+src/content/projects/retrolens.mdx
+  h_074f4115c47cea 10
+src/content/projects/frankly.mdx
+  h_074f4115c47cea 10
+src/content/projects/biddersweet.mdx
+  h_074f4115c47cea 10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "90023b75c3017daa0b1d0d306cb4a0e592af7493",
+  "prompts": {},
+  "humans": {
+    "h_074f4115c47cea": {
+      "author": "Ken Rettberg <kenrettberg@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_9df63a0607179d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6b507192-7623-48a0-adc7-d11ff2e3163c",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Ken Rettberg <kenrettberg@gmail.com>"
+    }
+  }
+}
