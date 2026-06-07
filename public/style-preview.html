@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Style Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body { font-family: Inter, system-ui, sans-serif; background: #111; }
+
+  /* Tab nav */
+  .tabs {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; gap: 0;
+    background: #1a1a1a;
+    border-bottom: 1px solid #333;
+  }
+  .tab {
+    flex: 1; padding: 12px 8px;
+    background: none; border: none; cursor: pointer;
+    color: #888; font-family: Inter, sans-serif; font-size: 12px; font-weight: 500;
+    text-align: center; transition: all 0.15s;
+    border-right: 1px solid #333;
+  }
+  .tab:last-child { border-right: none; }
+  .tab:hover { color: #ccc; background: #222; }
+  .tab.active { color: #fff; background: #2a2a2a; }
+
+  .panel { display: none; min-height: 100vh; padding-top: 45px; }
+  .panel.active { display: block; }
+
+  /* ─────────────────────────────────────────────
+     OPTION 1: Dark Editorial
+  ───────────────────────────────────────────── */
+  .editorial {
+    background: #080808;
+    position: relative;
+    overflow: hidden;
+  }
+  .editorial::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0; opacity: 0.35;
+  }
+  .editorial .glow {
+    position: absolute;
+    top: -120px; left: -80px;
+    width: 700px; height: 600px;
+    background: radial-gradient(ellipse, rgba(99,102,241,0.18) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .editorial .glow-2 {
+    position: absolute;
+    bottom: 0; right: -100px;
+    width: 400px; height: 400px;
+    background: radial-gradient(ellipse, rgba(139,92,246,0.10) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .editorial nav {
+    position: relative; z-index: 10;
+    display: flex; align-items: center; justify-content: space-between;
+    max-width: 860px; margin: 0 auto; padding: 24px 40px;
+  }
+  .editorial nav .logo {
+    font-family: Inter, sans-serif; font-size: 13px; font-weight: 500;
+    color: rgba(255,255,255,0.45); letter-spacing: 0.05em; text-transform: uppercase;
+    text-decoration: none;
+  }
+  .editorial nav .nav-links {
+    display: flex; gap: 28px; list-style: none;
+  }
+  .editorial nav .nav-links a {
+    font-size: 12px; color: rgba(255,255,255,0.4); text-decoration: none;
+    letter-spacing: 0.05em; text-transform: uppercase; font-weight: 500;
+    transition: color 0.2s;
+  }
+  .editorial nav .nav-links a:hover { color: rgba(255,255,255,0.85); }
+  .editorial .hero {
+    position: relative; z-index: 10;
+    max-width: 860px; margin: 0 auto; padding: 60px 40px 80px;
+  }
+  .editorial .badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    margin-bottom: 36px;
+  }
+  .editorial .badge .dot {
+    width: 6px; height: 6px; border-radius: 50%; background: #4ade80;
+    box-shadow: 0 0 8px rgba(74,222,128,0.8);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+  .editorial .badge span {
+    font-size: 11px; color: rgba(255,255,255,0.35);
+    letter-spacing: 0.08em; text-transform: uppercase; font-weight: 500;
+  }
+  .editorial h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(72px, 10vw, 110px);
+    font-weight: 900; line-height: 0.95;
+    color: #fff;
+    letter-spacing: -0.02em;
+    margin-bottom: 28px;
+  }
+  .editorial h1 em {
+    font-style: italic;
+    background: linear-gradient(135deg, #818cf8 0%, #a78bfa 50%, #c084fc 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .editorial .role {
+    font-size: 12px; color: rgba(255,255,255,0.35);
+    letter-spacing: 0.15em; text-transform: uppercase; font-weight: 500;
+    margin-bottom: 24px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .editorial .role::before {
+    content: ''; display: block; width: 32px; height: 1px;
+    background: rgba(255,255,255,0.2);
+  }
+  .editorial .bio {
+    font-size: 17px; color: rgba(255,255,255,0.45); line-height: 1.7;
+    max-width: 520px; margin-bottom: 44px;
+    font-weight: 300;
+  }
+  .editorial .ctas { display: flex; gap: 12px; align-items: center; }
+  .editorial .btn-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 11px 22px; border-radius: 6px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: #fff; font-size: 13px; font-weight: 500;
+    text-decoration: none; letter-spacing: 0.01em;
+    box-shadow: 0 0 24px rgba(99,102,241,0.35);
+    transition: box-shadow 0.2s, transform 0.15s;
+  }
+  .editorial .btn-primary:hover { box-shadow: 0 0 36px rgba(99,102,241,0.55); transform: translateY(-1px); }
+  .editorial .btn-secondary {
+    font-size: 13px; color: rgba(255,255,255,0.4); text-decoration: none;
+    font-weight: 500; letter-spacing: 0.02em; transition: color 0.2s;
+  }
+  .editorial .btn-secondary:hover { color: rgba(255,255,255,0.8); }
+
+  /* ─────────────────────────────────────────────
+     OPTION 2: Bold & Geometric
+  ───────────────────────────────────────────── */
+  .geometric {
+    background: #fafafa;
+    position: relative;
+  }
+  .geometric nav {
+    display: flex; align-items: center; justify-content: space-between;
+    max-width: 960px; margin: 0 auto; padding: 20px 40px;
+    border-bottom: 2px solid #000;
+  }
+  .geometric nav .logo {
+    font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700;
+    color: #000; text-decoration: none; letter-spacing: -0.01em;
+    text-transform: uppercase;
+  }
+  .geometric nav .nav-links {
+    display: flex; gap: 0; list-style: none;
+  }
+  .geometric nav .nav-links a {
+    display: block; padding: 6px 16px;
+    font-size: 12px; font-weight: 600; color: #000;
+    text-decoration: none; text-transform: uppercase; letter-spacing: 0.05em;
+    border: 1px solid transparent; transition: all 0.15s;
+  }
+  .geometric nav .nav-links a:hover { border-color: #000; }
+  .geometric .hero {
+    max-width: 960px; margin: 0 auto; padding: 0 40px;
+    display: grid; grid-template-columns: 1fr 1fr; align-items: stretch;
+    min-height: calc(100vh - 185px);
+    border-left: 2px solid #000; border-right: 2px solid #000;
+  }
+  .geometric .hero-left {
+    padding: 60px 0 60px;
+    border-right: 2px solid #000;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .geometric .hero-right {
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 40px 0 40px 48px;
+  }
+  .geometric .label {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.15em;
+    text-transform: uppercase; color: #999;
+    margin-bottom: 20px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .geometric .label::after { content: ''; flex: 1; height: 1px; background: #ddd; }
+  .geometric h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(56px, 8vw, 88px);
+    font-weight: 700; line-height: 0.95;
+    color: #000; letter-spacing: -0.04em;
+    margin-bottom: 0;
+  }
+  .geometric .accent-block {
+    display: inline-block;
+    background: #000; color: #fff;
+    padding: 4px 8px; margin-top: 6px;
+  }
+  .geometric .role {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: #777;
+    margin-bottom: 20px;
+  }
+  .geometric .bio {
+    font-size: 15px; color: #444; line-height: 1.65;
+    margin-bottom: 32px;
+  }
+  .geometric .tags {
+    display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 32px;
+  }
+  .geometric .tag {
+    padding: 4px 10px; border: 1.5px solid #000;
+    font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    color: #000;
+  }
+  .geometric .ctas { display: flex; gap: 10px; flex-direction: column; }
+  .geometric .btn-primary {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 14px 24px;
+    background: #000; color: #fff;
+    font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+    text-decoration: none; transition: background 0.15s;
+    border: 2px solid #000;
+  }
+  .geometric .btn-primary:hover { background: #222; }
+  .geometric .btn-secondary {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 14px 24px;
+    background: transparent; color: #000;
+    font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+    text-decoration: none; border: 2px solid #000; transition: all 0.15s;
+  }
+  .geometric .btn-secondary:hover { background: #000; color: #fff; }
+  .geometric .number-row {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    border-top: 1px solid #e0e0e0; margin-top: 32px;
+  }
+  .geometric .stat { padding: 20px 0; border-right: 1px solid #e0e0e0; }
+  .geometric .stat:last-child { border-right: none; padding-left: 20px; }
+  .geometric .stat-num {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 36px; font-weight: 700; color: #000; letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .geometric .stat-label {
+    font-size: 10px; font-weight: 600; color: #999;
+    text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px;
+  }
+
+  /* ─────────────────────────────────────────────
+     OPTION 3: Playful & Colorful
+  ───────────────────────────────────────────── */
+  .playful {
+    background: #fffbf7;
+  }
+  .playful nav {
+    display: flex; align-items: center; justify-content: space-between;
+    max-width: 900px; margin: 0 auto; padding: 20px 40px;
+  }
+  .playful nav .logo {
+    font-family: Inter, sans-serif; font-size: 15px; font-weight: 700;
+    color: #1a1a1a; text-decoration: none;
+  }
+  .playful nav .nav-links {
+    display: flex; gap: 4px; list-style: none;
+  }
+  .playful nav .nav-links a {
+    display: block; padding: 6px 14px; border-radius: 20px;
+    font-size: 13px; font-weight: 500; color: #555;
+    text-decoration: none; transition: all 0.2s;
+  }
+  .playful nav .nav-links a:hover { background: #f0edea; color: #1a1a1a; }
+  .playful .hero {
+    max-width: 900px; margin: 0 auto; padding: 48px 40px 72px;
+  }
+  .playful .badge {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: #ecfdf5; border: 1px solid #a7f3d0;
+    padding: 5px 12px; border-radius: 20px; margin-bottom: 32px;
+  }
+  .playful .badge .dot {
+    width: 6px; height: 6px; border-radius: 50%; background: #10b981;
+  }
+  .playful .badge span {
+    font-size: 12px; color: #059669; font-weight: 500;
+  }
+  .playful h1 {
+    font-family: Inter, sans-serif;
+    font-size: clamp(52px, 8vw, 80px);
+    font-weight: 700; line-height: 1.0;
+    color: #1a1a1a; letter-spacing: -0.03em;
+    margin-bottom: 20px;
+  }
+  .playful h1 .highlight {
+    position: relative; display: inline-block;
+  }
+  .playful h1 .highlight::after {
+    content: '';
+    position: absolute; bottom: 4px; left: -2px; right: -2px; height: 14px;
+    background: linear-gradient(90deg, #fbbf24, #f97316);
+    z-index: -1; border-radius: 2px; opacity: 0.4;
+    transform: rotate(-1deg);
+  }
+  .playful .role {
+    font-size: 16px; color: #777; font-weight: 400;
+    margin-bottom: 24px; letter-spacing: -0.01em;
+  }
+  .playful .role strong { color: #1a1a1a; font-weight: 600; }
+  .playful .bio {
+    font-size: 17px; color: #555; line-height: 1.65;
+    max-width: 540px; margin-bottom: 40px;
+  }
+  .playful .ctas { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .playful .btn-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 22px; border-radius: 10px;
+    background: #1a1a1a; color: #fff;
+    font-size: 14px; font-weight: 600;
+    text-decoration: none; transition: all 0.2s;
+    box-shadow: 0 2px 0 #000, 0 4px 12px rgba(0,0,0,0.15);
+  }
+  .playful .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 0 #000, 0 8px 20px rgba(0,0,0,0.2); }
+  .playful .btn-secondary {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 22px; border-radius: 10px;
+    background: #fff; color: #1a1a1a;
+    font-size: 14px; font-weight: 600;
+    text-decoration: none; transition: all 0.2s;
+    border: 2px solid #e5e5e5;
+    box-shadow: 0 2px 0 #e5e5e5;
+  }
+  .playful .btn-secondary:hover { transform: translateY(-2px); border-color: #ccc; box-shadow: 0 4px 0 #ccc; }
+  .playful .skills {
+    margin-top: 48px; display: flex; flex-wrap: wrap; gap: 8px;
+  }
+  .playful .skill {
+    padding: 6px 14px; border-radius: 8px;
+    font-size: 13px; font-weight: 500;
+    text-decoration: none;
+  }
+  .playful .skill-1 { background: #fef3c7; color: #92400e; }
+  .playful .skill-2 { background: #dbeafe; color: #1e40af; }
+  .playful .skill-3 { background: #ede9fe; color: #5b21b6; }
+  .playful .skill-4 { background: #fce7f3; color: #9d174d; }
+  .playful .skill-5 { background: #d1fae5; color: #065f46; }
+  .playful .skill-6 { background: #fee2e2; color: #991b1b; }
+  .playful .skill-7 { background: #ffedd5; color: #9a3412; }
+
+  /* ─────────────────────────────────────────────
+     OPTION 4: Clean & Refined
+  ───────────────────────────────────────────── */
+  .refined {
+    background: #fff;
+  }
+  .refined nav {
+    display: flex; align-items: center; justify-content: space-between;
+    max-width: 760px; margin: 0 auto; padding: 28px 40px;
+  }
+  .refined nav .logo {
+    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
+    color: #1a1a1a; text-decoration: none;
+  }
+  .refined nav .nav-links {
+    display: flex; gap: 32px; list-style: none;
+  }
+  .refined nav .nav-links a {
+    font-size: 13px; font-weight: 400; color: #999;
+    text-decoration: none; transition: color 0.15s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .refined nav .nav-links a:hover { color: #1a1a1a; }
+  .refined .hero {
+    max-width: 760px; margin: 0 auto; padding: 72px 40px 100px;
+    border-top: 1px solid #f0f0f0;
+  }
+  .refined .overline {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px; font-weight: 500; letter-spacing: 0.12em;
+    color: #bbb; text-transform: uppercase; margin-bottom: 28px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .refined .overline::before {
+    content: ''; display: block; width: 20px; height: 1px; background: #bbb;
+  }
+  .refined h1 {
+    font-family: 'DM Sans', sans-serif;
+    font-size: clamp(44px, 6vw, 68px);
+    font-weight: 300; line-height: 1.1;
+    color: #1a1a1a; letter-spacing: -0.025em;
+    margin-bottom: 32px;
+  }
+  .refined h1 strong {
+    font-weight: 700;
+  }
+  .refined .divider {
+    width: 40px; height: 2px; background: #1a1a1a;
+    margin-bottom: 32px;
+  }
+  .refined .bio {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px; color: #666; line-height: 1.75;
+    max-width: 480px; margin-bottom: 44px;
+    font-weight: 300;
+  }
+  .refined .ctas { display: flex; gap: 20px; align-items: center; }
+  .refined .btn-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 20px; border-radius: 4px;
+    background: #1a1a1a; color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 500;
+    text-decoration: none; transition: opacity 0.15s;
+  }
+  .refined .btn-primary:hover { opacity: 0.8; }
+  .refined .btn-secondary {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px; color: #999; text-decoration: none;
+    font-weight: 500; transition: color 0.15s;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .refined .btn-secondary:hover { color: #1a1a1a; }
+  .refined .meta {
+    margin-top: 80px; padding-top: 28px; border-top: 1px solid #f0f0f0;
+    display: flex; gap: 40px;
+  }
+  .refined .meta-item {}
+  .refined .meta-label {
+    font-size: 10px; font-weight: 500; letter-spacing: 0.1em;
+    color: #bbb; text-transform: uppercase; margin-bottom: 6px;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .refined .meta-value {
+    font-size: 13px; color: #444; font-weight: 400;
+    font-family: 'DM Sans', sans-serif;
+  }
+</style>
+</head>
+<body>
+
+<div class="tabs">
+  <button class="tab active" onclick="show('editorial', this)">① Dark Editorial</button>
+  <button class="tab" onclick="show('geometric', this)">② Bold & Geometric</button>
+  <button class="tab" onclick="show('playful', this)">③ Playful & Colorful</button>
+  <button class="tab" onclick="show('refined', this)">④ Clean & Refined</button>
+</div>
+
+<!-- ① Dark Editorial -->
+<div id="editorial" class="panel editorial active">
+  <div class="glow"></div>
+  <div class="glow-2"></div>
+  <nav>
+    <a href="#" class="logo">Ken Rettberg</a>
+    <ul class="nav-links">
+      <li><a href="#">Projects</a></li>
+      <li><a href="#">Contact</a></li>
+    </ul>
+  </nav>
+  <div class="hero">
+    <div class="badge">
+      <span class="dot"></span>
+      <span>Available for new roles</span>
+    </div>
+    <h1>Ken<br /><em>Rettberg</em></h1>
+    <p class="role">Senior Full-Stack Engineer</p>
+    <p class="bio">
+      I build systems that hold up under real pressure — financial platforms,
+      AI-powered search, developer tools people actually use.
+    </p>
+    <div class="ctas">
+      <a href="#" class="btn-primary">Get in touch</a>
+      <a href="#" class="btn-secondary">See my work →</a>
+    </div>
+  </div>
+</div>
+
+<!-- ② Bold & Geometric -->
+<div id="geometric" class="panel geometric">
+  <nav>
+    <a href="#" class="logo">KR</a>
+    <ul class="nav-links">
+      <li><a href="#">Projects</a></li>
+      <li><a href="#">Contact</a></li>
+    </ul>
+  </nav>
+  <div class="hero">
+    <div class="hero-left">
+      <div class="label">Engineer</div>
+      <h1>Ken<br /><span class="accent-block">Rettberg</span></h1>
+    </div>
+    <div class="hero-right">
+      <p class="role">Senior Full-Stack Engineer &amp; Culture Builder</p>
+      <p class="bio">
+        I build systems that hold up under real pressure — financial platforms,
+        AI-powered search, developer tools people actually use.
+      </p>
+      <div class="tags">
+        <span class="tag">Ruby on Rails</span>
+        <span class="tag">TypeScript</span>
+        <span class="tag">React</span>
+        <span class="tag">AI/LLM</span>
+      </div>
+      <div class="ctas">
+        <a href="#" class="btn-primary">Get in touch</a>
+        <a href="#" class="btn-secondary">See projects</a>
+      </div>
+      <div class="number-row">
+        <div class="stat">
+          <div class="stat-num">12+</div>
+          <div class="stat-label">Years shipping</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">5</div>
+          <div class="stat-label">Projects launched</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ③ Playful & Colorful -->
+<div id="playful" class="panel playful">
+  <nav>
+    <a href="#" class="logo">Ken Rettberg</a>
+    <ul class="nav-links">
+      <li><a href="#">Projects</a></li>
+      <li><a href="#">Contact</a></li>
+    </ul>
+  </nav>
+  <div class="hero">
+    <div class="badge">
+      <span class="dot"></span>
+      <span>Available for new roles</span>
+    </div>
+    <h1>
+      <span class="highlight">Senior</span><br />
+      Engineer<br />
+      &amp; Builder
+    </h1>
+    <p class="role">Hi, I'm <strong>Ken Rettberg</strong> — I make things on the internet.</p>
+    <p class="bio">
+      I build systems that hold up under real pressure — financial platforms,
+      AI-powered search, developer tools people actually use.
+    </p>
+    <div class="ctas">
+      <a href="#" class="btn-primary">Get in touch</a>
+      <a href="#" class="btn-secondary">See my work</a>
+    </div>
+    <div class="skills">
+      <span class="skill skill-1">Ruby on Rails</span>
+      <span class="skill skill-2">TypeScript</span>
+      <span class="skill skill-3">React</span>
+      <span class="skill skill-4">Elixir</span>
+      <span class="skill skill-5">PostgreSQL</span>
+      <span class="skill skill-6">AI / LLMs</span>
+      <span class="skill skill-7">Phoenix</span>
+    </div>
+  </div>
+</div>
+
+<!-- ④ Clean & Refined -->
+<div id="refined" class="panel refined">
+  <nav>
+    <a href="#" class="logo">Ken Rettberg</a>
+    <ul class="nav-links">
+      <li><a href="#">Projects</a></li>
+      <li><a href="#">Contact</a></li>
+    </ul>
+  </nav>
+  <div class="hero">
+    <div class="overline">Senior Full-Stack Engineer</div>
+    <h1>I build<br /><strong>systems</strong> that<br />hold up.</h1>
+    <div class="divider"></div>
+    <p class="bio">
+      Financial platforms, AI-powered search, developer tools people
+      actually use. Engineering empathy: code that works for the team
+      maintaining it as much as the end user.
+    </p>
+    <div class="ctas">
+      <a href="#" class="btn-primary">Get in touch</a>
+      <a href="#" class="btn-secondary">See my work →</a>
+    </div>
+    <div class="meta">
+      <div class="meta-item">
+        <div class="meta-label">Based in</div>
+        <div class="meta-value">San Francisco, CA</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Status</div>
+        <div class="meta-value">Open to offers</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Experience</div>
+        <div class="meta-value">12+ years</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function show(id, btn) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+  }
+</script>
+</body>
+</html>

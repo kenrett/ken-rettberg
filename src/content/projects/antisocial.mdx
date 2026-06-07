@@ -1,0 +1,53 @@
+---
+title: Antisocial
+tagline: A relationship-first social platform. Stay in touch with people you actually like — without the algorithm.
+description: Private, invite-only professional network designed to promote intentional human connections and eliminate attention-extraction algorithms. Rails API + Next.js PWA.
+stack: ['Rails 8', 'Next.js 15', 'PostgreSQL', 'Rodauth', 'Tailwind CSS v4', 'Solid Queue']
+date: 2026-05-26
+order: 1
+logo: /logos/antisocial.svg
+accent: '#4f46e5'
+links: {}
+---
+
+## The Problem
+
+Modern social networks optimize for user engagement, virality, and screen time above all else. This results in algorithmic feeds that amplify outrage, gamified metric loops (like visible follower counts and reactions), and infinite-scroll mechanics designed to addict users. 
+
+**The constraint:** Can we build a social platform that actively resists attention extraction by design?
+
+To solve this, Antisocial was built on a binding product constitution (`CONSTITUTION.md`) that serves as the supreme architectural guide. It enforces strict platform limits: a strictly chronological feed, no algorithmic "For You" recommendations, no public likes or follower metrics, and invite-only membership managed entirely by human administrators.
+
+## The Stack
+
+- **Rails 8 (API Mode)** — Handles core business logic, relational mappings, and background jobs. Rails 8's standard tooling made relationship graphs and invitation tracking extremely solid.
+- **Next.js 15 PWA** — Responsive frontend built with Tailwind CSS v4's new CSS-first design system. Installable on mobile devices with local caching for an app-like feel.
+- **Rodauth** — A highly secure, flexible authentication framework integrated at the database/middleware layer. Used to implement passwordless login magic links and profile completion redirects.
+- **Solid Queue** — Rails 8's database-backed queuing system, handling waitlist notifications and magic-link delivery without needing Redis for minor background workloads.
+- **PostgreSQL** — Stores transactional and relational data with robust indexing to guarantee fast queries on user connections.
+
+## The Hard Part
+
+Implementing strict product restrictions and integrating decoupled frameworks introduced complex technical and architectural challenges:
+
+### 1. Global Client IP Rate-Limiting Collision
+
+The Next.js server acts as a proxy for client submissions to the Rails API waitlist. During initial testing, the Rails API's rate limiter globally locked out waitlist registrations after just five submissions. Because Next.js was not forwarding client headers, Rails saw all incoming traffic as originating from Vercel's proxy server IPs rather than the end-users.
+
+We solved this by ensuring that the Next.js API router explicitly forwards client IP addresses (`X-Forwarded-For` and `X-Real-IP`) to the Rails backend, alongside updating Rails' trusted proxies configuration so that request throttling is correctly keyed to the end-users.
+
+### 2. Rodauth Validation Mismatches
+
+Rodauth handles user creation and validation entirely within its own middleware layer, bypassing Rails' typical Active Record validation controllers. Because Rodauth returns errors in its own specific nested format (e.g., `field-error` tuples) rather than standard REST envelopes, the Next.js client failed to parse error responses and defaulted every registration issue to a generic `"Something went wrong"` banner.
+
+We standardized error handling by extending the frontend's API client wrapper (`web/lib/api.ts`) with a Zod schema parser that detects Rodauth's `field-error` payload structure and maps it directly back to individual UI input fields.
+
+### 3. Concurrency-Safe Username Reclamation
+
+When a user closes their account, the profile data is deleted, but the `users` database row remains flagged as closed. To prevent username "hoarding" while maintaining database referential integrity, we updated the offboarding service to nullify or append a unique deleted timestamp to the account handle, immediately releasing the original handle for new invitees.
+
+## Results
+
+- **100% Constitutional Compliance**: No engagement algorithms, no hidden behavioral tracking, and direct relationship-based discovery.
+- **Robust Auth Flow**: Fully functional waitlist administration, invite-only magic link onboarding, and passwordless authentication.
+- **Standardized Client Integration**: Safe, robust API contracts between Next.js and Rails with correct rate limiting and form validation diagnostics.
