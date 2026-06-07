@@ -36,13 +36,18 @@ const projectBadgeClasses = {
   'required-listening': 'neon-badge-orange'
 };
 const badgeClass = projectBadgeClasses[project.id as keyof typeof projectBadgeClasses] || 'neon-badge-green';
+
+const resolveUrl = (path: string) => {
+  if (!path) return path;
+  return path.startsWith('/') ? `${import.meta.env.BASE_URL}${path.slice(1)}` : path;
+};
 ---
 
 <Layout title={`${title} — Ken Rettberg`} description={description}>
   <article class="max-w-3xl mx-auto px-6 py-16">
     <!-- Back -->
     <a
-      href="/#projects"
+      href={resolveUrl('/#projects')}
       class="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider text-gray-400 hover:text-white transition-colors mb-12"
     >
       <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -56,7 +61,7 @@ const badgeClass = projectBadgeClasses[project.id as keyof typeof projectBadgeCl
       <div class="flex items-center gap-3 mb-4">
         {logo && (
           <div class="h-10 w-10 rounded-xl bg-zinc-900 border border-[#27272a] flex items-center justify-center p-2 shrink-0">
-            <img src={logo} alt={`${title} logo`} class="w-full h-full object-contain" />
+            <img src={resolveUrl(logo)} alt={`${title} logo`} class="w-full h-full object-contain" />
           </div>
         )}
         <p class="text-sm text-gray-500 font-mono">{formattedDate}</p>
@@ -142,10 +147,10 @@ const badgeClass = projectBadgeClasses[project.id as keyof typeof projectBadgeCl
           : 'grid grid-cols-1 sm:grid-cols-2 gap-4'
         }>
           {screenshots.map((src, i) => (
-            <a href={src} target="_blank" rel="noopener noreferrer"
+            <a href={resolveUrl(src)} target="_blank" rel="noopener noreferrer"
               class="block rounded-xl overflow-hidden border border-[#27272a] bg-[#121214] hover:opacity-90 transition-opacity">
               <img
-                src={src}
+                src={resolveUrl(src)}
                 alt={`${title} screenshot ${i + 1}`}
                 class="w-full h-auto object-cover"
                 loading="lazy"
