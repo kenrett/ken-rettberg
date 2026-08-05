@@ -1,0 +1,82 @@
+src/styles/global.css
+  s_695094d48b2508::t_e109c7daac95d0 16-17
+  s_695094d48b2508::t_66fa3676624bb8 166-189
+public/logos/doo-diligence.svg
+  s_695094d48b2508::t_e5055634e9b8ca 1-8
+src/content/projects/retrolens.mdx
+  s_695094d48b2508::t_c76bee0aa49bc3 23-27,35-37
+src/content/projects/antisocial.mdx
+  s_695094d48b2508::t_8b91b900f8dccf 3
+  s_695094d48b2508::t_c76bee0aa49bc3 23-27
+public/style-preview.html
+  s_695094d48b2508::t_e97d9d9c5180eb 475,502,548,550
+src/content/projects/required-listening.mdx
+  s_695094d48b2508::t_ccbbca02340335 3
+  s_695094d48b2508::t_c76bee0aa49bc3 23-27
+src/content/projects/doo-diligence.mdx
+  s_695094d48b2508::t_6a9a29a37e4a7a 4
+  s_695094d48b2508::t_bff20a101cbbcf 45
+  s_695094d48b2508::t_d3902dd1bb8437 17
+  s_695094d48b2508::t_0531e93ca8143b 1-2,5-16,18-20,22-24,28,30-34,36,38,40-43,46-53,55
+  s_695094d48b2508::t_79c32f7a8c2af9 44
+  s_695094d48b2508::t_0cb09319a2ee21 37
+  s_695094d48b2508::t_1b6aa6b0e86be1 35
+  s_695094d48b2508::t_8832633648feee 54
+  s_695094d48b2508::t_67ac9f34d782bc 3
+  s_695094d48b2508::t_c76bee0aa49bc3 25-27,29
+  s_695094d48b2508::t_af8194334d4e59 21
+  s_695094d48b2508::t_1888baec765785 39
+src/content/projects/frankly.mdx
+  s_695094d48b2508::t_c76bee0aa49bc3 24-27,35-37
+src/components/ProjectCard.astro
+  s_695094d48b2508::t_ac3b5c98cf29c1 51-62
+src/pages/index.astro
+  s_695094d48b2508::t_9fb211c3d6ec68 106
+  s_695094d48b2508::t_8fea70fd93822d 29
+.claude/launch.json
+  s_695094d48b2508::t_7984bcdeffeb54 9-14
+src/content/projects/biddersweet.mdx
+  s_695094d48b2508::t_95b0ed894e59dd 29
+  s_695094d48b2508::t_c76bee0aa49bc3 23-27,37-39
+  s_695094d48b2508::t_304db60eccd335 33
+  s_695094d48b2508::t_d975d10d5d74c0 41
+src/content/projects/peer.mdx
+  s_695094d48b2508::t_90219e4b83c195 37
+  s_695094d48b2508::t_c76bee0aa49bc3 25-29
+  s_695094d48b2508::t_7d0395a04c416c 35
+src/content/projects/prompt-fail.mdx
+  s_695094d48b2508::t_48734432eea19c 39
+  s_695094d48b2508::t_fee5e88db15361 37
+  s_695094d48b2508::t_f66cd4d16b0bf6 1-2,5-16,18-20,22-25,28-30,32-36,38,40-42,44-48,50
+  s_695094d48b2508::t_0cbed65f25f082 27
+  s_695094d48b2508::t_7ef728df13727d 21
+  s_695094d48b2508::t_3bca04e385c360 3
+  s_695094d48b2508::t_c76bee0aa49bc3 26
+  s_695094d48b2508::t_8449f1cc63db15 4
+  s_695094d48b2508::t_2f72ea378ace5f 17
+  s_695094d48b2508::t_711e846f9261f4 31
+  s_695094d48b2508::t_1c515f5c41d53a 43
+  s_695094d48b2508::t_3840658738ba44 49
+src/pages/projects/[slug].astro
+  s_695094d48b2508::t_531334f7dccf99 36-38
+  s_695094d48b2508::t_54c5870ff191b4 54
+public/logos/prompt-fail.svg
+  s_695094d48b2508::t_bead4fea84e200 1-3,6
+  s_695094d48b2508::t_ea252b09d242af 4-5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "6cb1135ba6c45c99defa62f5fb912355f94c470e",
+  "prompts": {},
+  "sessions": {
+    "s_695094d48b2508": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1ef7ece5-3c71-4422-8f1b-adefefdf2a76",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Ken Rettberg <kenrettberg@gmail.com>"
+    }
+  }
+}
