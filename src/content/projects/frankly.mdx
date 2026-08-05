@@ -21,10 +21,10 @@ Rails is powerful, but it's also opinionated, heavy, and slow to boot for small 
 
 ## The Stack
 
-- **Sinatra** — lightweight HTTP routing without Rails convention overhead
-- **ActiveRecord** — familiar ORM, works standalone outside Rails
-- **Thor** — battle-tested CLI framework used by Rails itself, handles argument parsing and file generation
-- **RSpec** — test suite is generated with the app, so there's no excuse not to test from day one
+- **Sinatra**: lightweight HTTP routing without Rails convention overhead
+- **ActiveRecord**: familiar ORM, works standalone outside Rails
+- **Thor**: battle-tested CLI framework used by Rails itself, handles argument parsing and file generation
+- **RSpec**: test suite is generated with the app, so there's no excuse not to test from day one
 
 I chose Thor specifically over optparse or dry-cli because it handles subcommands cleanly and the DSL reads like documentation.
 
@@ -32,9 +32,9 @@ I chose Thor specifically over optparse or dry-cli because it handles subcommand
 
 The trickiest piece was generating a project that *felt* properly set up, not just files dropped in a folder. That meant:
 
-1. **Conditional file generation** — the CLI needed to ask questions and branch on answers (PostgreSQL vs SQLite, RSpec vs Minitest) without becoming unmaintainable
-2. **Idempotency** — running the generator twice shouldn't corrupt the project; files that exist should be skipped or warn
-3. **ActiveRecord standalone wiring** — AR outside Rails needs explicit `establish_connection` config, a Rakefile for migrations, and a `db/` structure that won't confuse developers. Getting this right took the most iteration.
+1. **Conditional file generation**: the CLI needed to ask questions and branch on answers (PostgreSQL vs SQLite, RSpec vs Minitest) without becoming unmaintainable
+2. **Idempotency**: running the generator twice shouldn't corrupt the project; files that exist should be skipped or warn
+3. **ActiveRecord standalone wiring**: AR outside Rails needs explicit `establish_connection` config, a Rakefile for migrations, and a `db/` structure that won't confuse developers. Getting this right took the most iteration.
 
 The solution was a strict separation between the template files and the generator logic, templates are ERB files that get rendered into the target directory, and the generator is pure Thor with no business logic in the templates.
 

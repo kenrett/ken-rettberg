@@ -1,0 +1,55 @@
+---
+title: Doo Diligence
+tagline: Field-ops platform for a residential pet-waste service, with a schedule that regenerates itself every night and money checks that run against Stripe test clocks because a green test suite can't see a payment go missing.
+description: Rails 8 modular monolith for a single-owner pooper-scooper business, with rule-based scheduling materialized into a 14-day visit horizon, Stripe subscriptions as the billing source of truth, and a Hotwire field app with photo proof.
+stack: ['Rails 8.1', 'Ruby 3.4', 'PostgreSQL', 'Hotwire', 'Stripe', 'Solid Queue', 'Cloudflare R2', 'Postmark']
+date: 2026-08-01
+order: 7
+logo: /logos/doo-diligence.svg
+accent: '#2f81ff'
+# screenshots: [/screenshots/doo-diligence-screenshot.png]
+# demoVideo: 'https://www.youtube.com/watch?v=...'
+links: {}
+---
+
+## The Problem
+
+A pooper-scooper route looks trivial until you write it down. The customer is on a rule (every Tuesday, two dogs), but the week is full of exceptions. The gate is locked. The dog is out. It's raining on the whole route. The customer goes on vacation. Each of those has to land somewhere in the data model, and each one raises the same question: does the customer still get billed?
+
+Most scheduling software answers by generating a year of rows and then editing them. That makes every rule change a migration and every exception indistinguishable from a mistake.
+
+I built this ahead of demand, so getting the model right mattered more than shipping a manual slice fast. The architecture of record lives in a `wayfinder/` directory of eleven decision tickets, all closed before any of this was coded.
+
+## The Stack
+
+- **Rails 8.1 modular monolith**: Hotwire and Turbo on every surface, server-side sessions, no React anywhere. The field app is an online-first PWA with a retry queue rather than a full offline store.
+- **PostgreSQL + Solid Queue/Cache/Cable**: one database, no Redis.
+- **Stripe**: flat monthly subscription per frequency tier plus one-off items. Stripe is authoritative; there is no parallel ledger.
+- **Cloudflare R2** via Active Storage for completion photos, **Postmark** for service email.
+- **`Current.account`**: the one multi-tenant seam reserved up front. Everything else about SaaS is out of scope.
+
+Auth splits by audience: customers get magic links only, no passwords; staff get a single password account and no RBAC.
+
+## The Hard Part
+
+**Visits are a projection, not a record.** The authoritative layer is `ServicePlan` (the rule) plus `Override` (the exceptions). A materializer projects those into a rolling 14-day horizon of `Visit` rows, idempotent and unique per plan-and-date, so it can run every night without duplicating anything. Change the rule and tomorrow's schedule follows. History is immutable: the materializer only owns rows still in `scheduled`.
+
+That constraint produced the subtlest bug in the build. A visit that can't be serviced closes as `unable`; one that gets done closes as `completed`. Both are correctable on the service day. The gate is locked at ten, the owner gets home at two, and the yard does get done. The obvious implementation moves the row back to `scheduled` and re-closes it. That's wrong: the moment it's `scheduled` again the materializer owns it, and a plan pause can prune away the record that a truck ever went out. Corrections move straight from one outcome to the other and never pass back through `scheduled`.
+
+**The test suite cannot see money.** Unit tests assert on the params hash handed to the Stripe gem, one layer above where a value actually goes missing. Both money bugs in the pause/resume work shipped past a green suite and green CI. The nastiest produced a well-formed request Stripe accepted; the money only failed to appear a billing period later.
+
+So three checks run against real Stripe test clocks, outside CI, and assert on what was actually collected:
+
+1. **Pause → resume** across a real billing boundary. Nothing collected while paused; the re-anchored period does get billed on the resume date.
+2. **A pause carried into dunning.** A real renewal is failed on a real card, the customer pauses mid-Smart-Retries, and the resume is refused: you don't put the truck back out on a subscription Stripe can't collect from. Fix the card, pay the invoice, and the resume goes through. The gate is a deferral, not a wall. On its first run it found that retry exhaustion landed on `canceled`, not the `unpaid` the billing ticket assumed.
+3. **An abandoned signup, chased twice.** The second chase has to come back with a different session id. A chase keyed like the original signup gets Stripe's 24-hour replay of the dead session instead, with a 200 and a URL that looks right. This one has no test clock on purpose: both traps live in the wall clock, so the window is exercised by running inside it.
+
+Each of the three found a real bug on its first run.
+
+## Results
+
+- Eleven architecture decisions closed and written down before the first line of application code
+- Nightly materializer running under `config/recurring.yml`, idempotent across reruns
+- Stripe webhook mirroring (`invoice.paid`, `invoice.payment_failed`, `customer.subscription.updated/deleted`) with an automatic past-due pause hold
+- Rails test suite covering the materializer's guarantees, webhook idempotency, notification dedup, account scoping, and the field route end to end, plus three network-bound Stripe checks that refuse to run against a live key
+- [TODO: add screenshots of the field route and owner console]

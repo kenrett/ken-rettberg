@@ -20,25 +20,25 @@ The surface area where real money moves is where bugs are most expensive. This p
 
 ## The Stack
 
-- **Rails 8** — ActiveRecord, service objects, and a strict layering convention: controllers are thin, all business logic lives in `app/services/`
-- **PostgreSQL** — `SELECT FOR UPDATE` row-level locking for concurrency; append-only ledger rows for financial audit trail
-- **Stripe** — webhook-driven payment processing with idempotency keys; `StripeEvent.processed_at` prevents double-processing on retry
-- **Sidekiq + Redis** — async processing for Stripe webhooks and post-auction finalization
-- **Minitest** — test-first discipline on anything touching credits or auctions; no business logic ships without a test
+- **Rails 8**: ActiveRecord, service objects, and a strict layering convention: controllers are thin, all business logic lives in `app/services/`
+- **PostgreSQL**: `SELECT FOR UPDATE` row-level locking for concurrency; append-only ledger rows for financial audit trail
+- **Stripe**: webhook-driven payment processing with idempotency keys; `StripeEvent.processed_at` prevents double-processing on retry
+- **Sidekiq + Redis**: async processing for Stripe webhooks and post-auction finalization
+- **Minitest**: test-first discipline on anything touching credits or auctions; no business logic ships without a test
 
-I chose Stripe's webhook model over polling because the idempotency guarantees are built in — Stripe will retry failed webhooks, and the `processed_at` pattern means replays are safe.
+I chose Stripe's webhook model over polling because the idempotency guarantees are built in. Stripe will retry failed webhooks, and the `processed_at` pattern means replays are safe.
 
 ## The Hard Part
 
-The hardest problem was **the credits ledger under concurrent load**. The naive approach — read current balance, check if sufficient, debit — has a classic TOCTOU race condition. Two bids placed simultaneously can both read a balance of 100, both pass the check, and both debit, leaving the user at -100.
+The hardest problem was **the credits ledger under concurrent load**. The naive approach (read current balance, check if sufficient, debit) has a classic TOCTOU race condition. Two bids placed simultaneously can both read a balance of 100, both pass the check, and both debit, leaving the user at -100.
 
 The solution has three layers:
 
-1. **Append-only ledger** — `CreditTransaction` rows are never updated or deleted. The current balance is always computed as `SUM(amount)` over the ledger. This makes the audit trail unimpeachable and avoids the "update a balance column" race entirely.
-2. **Lock ordering** — every operation that touches both a user and an auction acquires locks in a fixed order (`user → auction`, enforced via `LockOrder.with_user_then_auction`). This prevents deadlocks under concurrent load.
-3. **Retry with backoff** — `PlaceBid` retries up to `MAX_RETRIES = 3` times on lock contention, then returns a structured `ServiceResult` error the UI can surface meaningfully.
+1. **Append-only ledger**: `CreditTransaction` rows are never updated or deleted. The current balance is always computed as `SUM(amount)` over the ledger. This makes the audit trail unimpeachable and avoids the "update a balance column" race entirely.
+2. **Lock ordering**: every operation that touches both a user and an auction acquires locks in a fixed order (`user → auction`, enforced via `LockOrder.with_user_then_auction`). This prevents deadlocks under concurrent load.
+3. **Retry with backoff**: `PlaceBid` retries up to `MAX_RETRIES = 3` times on lock contention, then returns a structured `ServiceResult` error the UI can surface meaningfully.
 
-The second hard problem was **multi-storefront isolation**. Each request sets `Current.storefront_key` via middleware, and every query is scoped to that key. A data leak between storefronts would be a serious trust failure. The pattern was validated with dedicated cross-storefront security tests — not just happy-path tests.
+The second hard problem was **multi-storefront isolation**. Each request sets `Current.storefront_key` via middleware, and every query is scoped to that key. A data leak between storefronts would be a serious trust failure. The pattern was validated with dedicated cross-storefront security tests, not just happy-path tests.
 
 ## Results
 

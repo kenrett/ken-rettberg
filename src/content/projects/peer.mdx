@@ -22,19 +22,19 @@ Backchannel's core mechanic is mutual vouching: your data is invisible to anothe
 
 ## The Stack
 
-- **Rails 8 API** — API-only mode with Devise for authentication, Pundit for authorization. Rails was the right call: the trust graph logic and data model are complex, and ActiveRecord + a proper ORM made the relationship queries tractable.
-- **Next.js 16 PWA** — Tailwind v4 (the new `@import "tailwindcss"` + `@theme {}` CSS-first config), installable on mobile. Service worker handles offline gracefully.
-- **PostgreSQL + Redis** — Postgres for the relational data model (users, vouches, notes, connections); Redis for session state and Sidekiq jobs
-- **Docker Compose** — full dev environment in one command; API, Postgres, and Redis all containerized. Next.js dev server runs on the host.
-- **Playwright** — end-to-end smoke tests against the full stack; runs on the host against the Dockerized API
+- **Rails 8 API**: API-only mode with Devise for authentication, Pundit for authorization. Rails was the right call: the trust graph logic and data model are complex, and ActiveRecord + a proper ORM made the relationship queries tractable.
+- **Next.js 16 PWA**: Tailwind v4 (the new `@import "tailwindcss"` + `@theme {}` CSS-first config), installable on mobile. Service worker handles offline gracefully.
+- **PostgreSQL + Redis**: Postgres for the relational data model (users, vouches, notes, connections); Redis for session state and Sidekiq jobs
+- **Docker Compose**: full dev environment in one command; API, Postgres, and Redis all containerized. Next.js dev server runs on the host.
+- **Playwright**: end-to-end smoke tests against the full stack; runs on the host against the Dockerized API
 
 I chose Next.js 16 over a native mobile app because the PWA install flow covers 80% of the "app feel" use case with a single codebase.
 
 ## The Hard Part
 
-The hardest piece was **the trust graph data model and its authorization rules**. A vouch is directional (A vouches for B, B vouches for A — independently), but access is bilateral. The query to determine "can user A see user B's notes" has to be efficient at scale, not an N+1 trap.
+The hardest piece was **the trust graph data model and its authorization rules**. A vouch is directional (A vouches for B and B vouches for A, independently), but access is bilateral. The query to determine "can user A see user B's notes" has to be efficient at scale, not an N+1 trap.
 
-The solution: a denormalized `connections` table that gets written whenever a mutual vouch is established (via an `after_commit` callback on the `Vouch` model). Reads hit the `connections` table — a single indexed lookup. Writes are async and idempotent. This separates read latency from write complexity.
+The solution: a denormalized `connections` table that gets written whenever a mutual vouch is established (via an `after_commit` callback on the `Vouch` model). Reads hit the `connections` table in a single indexed lookup. Writes are async and idempotent. This separates read latency from write complexity.
 
 The second hard problem was **Devise 5 + API mode quirks**. Devise 5 removed some autoloading that worked implicitly in earlier versions. Getting session-less token auth working alongside CSRF-exempt API endpoints required explicitly requiring `devise/orm/active_record` in the initializer and auditing every ApplicationController concern.
 

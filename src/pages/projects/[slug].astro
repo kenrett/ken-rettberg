@@ -33,7 +33,9 @@ const projectBadgeClasses = {
   'frankly': 'neon-badge-pink',
   'biddersweet': 'neon-badge-yellow',
   'peer': 'neon-badge-purple',
-  'required-listening': 'neon-badge-orange'
+  'required-listening': 'neon-badge-orange',
+  'doo-diligence': 'neon-badge-blue',
+  'prompt-fail': 'neon-badge-red'
 };
 const badgeClass = projectBadgeClasses[project.id as keyof typeof projectBadgeClasses] || 'neon-badge-green';
 
@@ -49,7 +51,7 @@ const resolveUrl = (path: string) => {
 };
 ---
 
-<Layout title={`${title} — Ken Rettberg`} description={description}>
+<Layout title={`${title} | Ken Rettberg`} description={description}>
   <article class="max-w-3xl mx-auto px-6 py-16">
     <!-- Back -->
     <a
