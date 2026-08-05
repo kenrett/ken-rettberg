@@ -1,0 +1,50 @@
+---
+title: PromptFail
+tagline: A public site where strangers post AI fails and vote them up, HackerNews-style, designed from the first commit for the day the strangers turn hostile.
+description: Django community site for AI-fail screenshots with threaded comments, in-query Hot ranking, and layered abuse defense covering moderation screening at upload, tiered rate limits, and a report queue.
+stack: ['Django 6', 'Python 3.13', 'PostgreSQL', 'htmx', 'Cloudflare Images', 'django-allauth', 'Render']
+date: 2026-07-26
+order: 8
+logo: /logos/prompt-fail.svg
+accent: '#ff2d55'
+# screenshots: [/screenshots/prompt-fail-screenshot.png]
+# demoVideo: 'https://www.youtube.com/watch?v=...'
+links: {}
+---
+
+## The Problem
+
+People collect AI fails (the hallucinated citation, the chatbot arguing about the year, the six-fingered hand) and post them into group chats where they die. The obvious fix is a public board with voting and comments.
+
+The non-obvious part is that a public site accepting image uploads from anonymous strangers is a target on day one. Every decision here was made against three constraints: time to launch, resistance to abuse, and near-zero operating cost. Nothing else got a vote.
+
+The project started with a written vocabulary rather than a schema. Post, Member, Upvote, Score, Tombstone, Feed: each term defined, each with an explicit *avoid* list (no "karma", no "flair", no "mod"). Naming drift is how a small codebase turns into a confusing one.
+
+## The Stack
+
+- **Django 6 monolith** on Render, one process, server-rendered templates
+- **PostgreSQL on Neon's free tier**: plain managed Postgres, none of the host's platform features, pooled connection for the app and the direct connection reserved for migrations
+- **htmx** for voting, inline edits, and replies, with no build step and no client framework
+- **Cloudflare Images** for storage and variants, **django-allauth** for Google and GitHub sign-in
+- **No password auth anywhere.** The provider identity is never displayed; the site is pseudonymous by design.
+
+Choosing the boring host twice was deliberate. Supabase and then Neon were both picked as *plain Postgres* (the ADRs say so explicitly), so that swapping hosts, which happened once already, cost one connection string.
+
+## The Hard Part
+
+**Ranking in the query.** Hot is `upvotes / (age_hours + 2)^1.8`, computed in the database rather than in Python, which means an `AgeSeconds` expression that emits `EXTRACT(EPOCH FROM ...)` on Postgres and a `JULIANDAY` fallback on SQLite so the local test database behaves the same. Sorts and Model Tag filters are independent controls: sorts reorder, filters narrow, and any combination has to work.
+
+**Uploads go through the server, not around it.** Cloudflare offers direct creator uploads that keep image bytes off the dyno, and I rejected them. Validation and moderation screening both need the bytes *before* the image is publicly servable, and direct upload turns that into a two-phase upload-screen-activate dance. Proxying keeps it a straight line, and rate limiting sits naturally on the one view that receives bytes. The order in that view is validate → upload → save, so a Cloudflare failure aborts before anything persists. The narrow window where the upload succeeds and the save fails can orphan an image; that's accepted and documented, because an unreferenced image costs nothing and is unreachable without its URL. No reconciliation jobs.
+
+**Abuse defense is layered, and each layer is cheap.** Screening runs at upload against OpenAI's moderation endpoint and blocks on a flag; Cloudflare's CSAM scanning sits underneath it. Rate limits are tiered by account age: five posts a day and thirty comments an hour for established members, two and five for anything younger than 24 hours. Reports feed an admin queue and never auto-remove content. Bans strip participation but never reading.
+
+**Deleting a comment is the fiddly one.** A comment with replies becomes a Tombstone so the thread survives; a childless one is removed outright. That interacts with the rate limiter in a way worth being honest about: tombstoned rows still count against quota, hard deletes don't, so delete-and-repost currently clears the cap. It's a known hole, written down in the post-v1 list rather than quietly ignored.
+
+Threads nest without a depth limit, sorted by score with ties newest-first. Rendering caps the visual indent and offers a "continue thread" link past it. Edits and deletes re-render only the comment body. An early version rebuilt the whole tree on every edit, which is fine at ten comments and not at a thousand.
+
+## Results
+
+- Shipped end to end: auth, feed, posts, threaded comments, voting, images, moderation, rate limits, deploy, domain, TLS
+- Every architectural decision recorded as an ADR, including the one that got superseded
+- Post-v1 list holds only genuinely deferred work with explicit triggers: downvotes ship when garbage comments become a real problem, version-level model tags when people start writing versions in descriptions
+- [TODO: add screenshots of the feed and a post detail page]

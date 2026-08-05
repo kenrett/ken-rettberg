@@ -1,6 +1,6 @@
 ---
 title: Required Listening
-tagline: Timestamped annotation for music — leave a note at exactly 2:34 of a track, tied to what's playing right now in Spotify.
+tagline: Timestamped annotation for music. Leave a note at exactly 2:34 of a track, tied to what's playing right now in Spotify.
 description: Spotify-integrated music annotation app with real-time playback sync, timestamped notes, and a two-cookie auth system with breach detection.
 stack: ['Rails 8', 'React 19', 'TypeScript', 'Vite', 'Spotify OAuth', 'PostgreSQL', 'Vitest']
 date: 2025-10-01
@@ -20,11 +20,11 @@ The secondary challenge: notes are only useful if they're tied to the *exact pla
 
 ## The Stack
 
-- **Rails 8 API** — API-only mode, handling auth, Spotify token management, and notes persistence. Spotify access/refresh tokens are stored server-side and never sent to the browser.
-- **React 19 + Vite** — fast HMR dev experience; React 19 concurrent features made the real-time playback polling feel smooth
-- **Spotify OAuth + Playback API** — the standard OAuth 2.0 PKCE flow for authorization; polling the Spotify `/me/player` endpoint for current position
-- **Two-cookie auth** — `jwt` (15-min HS256, HttpOnly) + `refresh_token` (30-day opaque, HttpOnly). Refresh tokens rotate on use for breach detection: if a stolen token is used after rotation, the old token is invalidated and the active session is revoked.
-- **Vitest** — 74 unit tests covering the auth flow, token rotation, and Spotify proxy layer
+- **Rails 8 API**: API-only mode, handling auth, Spotify token management, and notes persistence. Spotify access/refresh tokens are stored server-side and never sent to the browser.
+- **React 19 + Vite**: fast HMR dev experience; React 19 concurrent features made the real-time playback polling feel smooth
+- **Spotify OAuth + Playback API**: the standard OAuth 2.0 PKCE flow for authorization; polling the Spotify `/me/player` endpoint for current position
+- **Two-cookie auth**: `jwt` (15-min HS256, HttpOnly) + `refresh_token` (30-day opaque, HttpOnly). Refresh tokens rotate on use for breach detection: if a stolen token is used after rotation, the old token is invalidated and the active session is revoked.
+- **Vitest**: 74 unit tests covering the auth flow, token rotation, and Spotify proxy layer
 
 The "no tokens in the browser" constraint shaped the entire architecture: the API acts as a Spotify proxy, the frontend only ever holds a short-lived JWT.
 

@@ -13,6 +13,8 @@
   --color-neon-yellow: #ffdf00;
   --color-neon-purple: #bd00ff;
   --color-neon-orange: #ff6c00;
+  --color-neon-blue: #2f81ff;
+  --color-neon-red: #ff2d55;
 
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
@@ -157,6 +159,30 @@
     color: var(--color-neon-orange);
     background-color: rgba(255, 108, 0, 0.06);
     border: 1px solid rgba(255, 108, 0, 0.25);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+  }
+
+  .neon-badge-blue {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--color-neon-blue);
+    background-color: rgba(47, 129, 255, 0.06);
+    border: 1px solid rgba(47, 129, 255, 0.25);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+  }
+
+  .neon-badge-red {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--color-neon-red);
+    background-color: rgba(255, 45, 85, 0.06);
+    border: 1px solid rgba(255, 45, 85, 0.25);
     padding: 0.25rem 0.5rem;
     border-radius: 4px;
   }

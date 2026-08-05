@@ -20,11 +20,11 @@ The specific constraint I wanted to solve: **let the user search normally, but h
 
 ## The Stack
 
-- **Next.js 15 App Router** — server components made the API orchestration layer clean; no separate backend needed
-- **TMDB API** — episode air dates are the source of truth for the "safety cutoff"
-- **Serper.dev** — Google search results via API, with date-filtering support
-- **Claude Haiku** — fast, cheap LLM for contextual spoiler classification where date filters alone aren't enough
-- **shadcn/ui + Tailwind** — component library with zero style decisions I had to fight
+- **Next.js 15 App Router**: server components made the API orchestration layer clean; no separate backend needed
+- **TMDB API**: episode air dates are the source of truth for the "safety cutoff"
+- **Serper.dev**: Google search results via API, with date-filtering support
+- **Claude Haiku**: fast, cheap LLM for contextual spoiler classification where date filters alone aren't enough
+- **shadcn/ui + Tailwind**: component library with zero style decisions I had to fight
 
 The AI integration here isn't the main character, it's the last line of defense in a deliberate three-layer pipeline.
 
@@ -32,9 +32,9 @@ The AI integration here isn't the main character, it's the last line of defense 
 
 The pipeline has three layers, and each one failing silently would break the safety guarantee:
 
-1. **Hard cutoff** — any result with a publication date after the episode air date is blocked entirely, no exceptions
-2. **Heuristic rules** — title and snippet patterns that flag obvious spoilers (character names in result titles, "dies", "season finale", etc.)
-3. **LLM classifier** — Claude Haiku evaluates ambiguous results that passed the date filter but might contain future-knowledge spoilers embedded in older content (e.g., a pre-airing "what to expect" article that references later events)
+1. **Hard cutoff**: any result with a publication date after the episode air date is blocked entirely, no exceptions
+2. **Heuristic rules**: title and snippet patterns that flag obvious spoilers (character names in result titles, "dies", "season finale", etc.)
+3. **LLM classifier**: Claude Haiku evaluates ambiguous results that passed the date filter but might contain future-knowledge spoilers embedded in older content (e.g., a pre-airing "what to expect" article that references later events)
 
 The hardest design decision was **layer ordering**. Running the LLM on every result would be accurate but expensive and slow. Running it first would waste tokens on results that the date filter would eliminate anyway. The three-stage funnel: hard block → heuristics → LLM, keeps Haiku calls to a minimum while maintaining safety guarantees.
 
